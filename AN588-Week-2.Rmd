@@ -59,16 +59,16 @@ v[seq(from = 1, to = 15, by = 2)] #using a function/calculation to subset a vect
 ```
 ##Challenge 1
 
-Creating a vector of the first sentence of *Ulysses* by James Joyce.
+Creating a vector of the first sentence of *Ulysses* by James Joyce and removing punctuation.
 ```{r Challenge 1 vector}
 Ulysses <- c("Stately, plump Buck Mulligan came from the stairhead, bearing a bowl of lather on which a mirror and a razor lay crossed.") #creating the string
 Ulysses
 Ulysses_unpunct <- gsub("[[:punct:]]","",Ulysses) #removing punctuation
 Ulysses_unpunct
-Ulysses_split <- str_split_1(Ulysses_unpunct, " ") #dividing the string into a vector of substrings
+Ulysses_split <- str_split_1(Ulysses_unpunct, " ") #dividing the string into a vector of substrings. There is a space between the " " to indicate that it should split every time there is a apace. I used str_split_1 instead of str_split because str_split_1 returns a character vector which works in seq().
 Ulysses_split
 ```
-Extacting every third element of the vector
+Extracting every third element of the vector using seq()
 ```{r Challenge 1 subset}
 every3 <- Ulysses_split[seq(from = 3, to = 21, by = 3)]
 every3
