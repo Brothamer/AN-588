@@ -99,3 +99,73 @@ Given the matrix, mat, above, extract the elements from row 2, column 2 to row 6
 z <- c(mat[2,2], mat[6,9])
 z
 ```
+
+##Challenge 3
+Construct a 4-dimensional, 400 element array (5 x 5 x 4 x 4) named a consisting of the numbers 400 to 1 (i.e., a descending series)
+```{r Challenge 3 4D array}
+a <- array(data = 1:400, dim = c(5, 5, 4, 4))
+a
+```
+Given this matrix, what would the following return?
+
+a[1, 1, 1, 2]
+
+a[2, 3, 2, ]
+
+a[1:5, 1:5, 3, 3]
+```{r Challenge 3 return values}
+a[1,1,1,2] #a single point
+a[2,3,2,] #a vector
+a[1:5,1:5,3,3] #a matrix
+```
+##Overwriting
+You can replace elements in a vector or matrix, or even entire rows or columns, by identifying the elements to be replaced and then assigning them new values
+
+Starting with the matrix, mat, defined above, what will be the effects of operations below? 
+
+```{r Overwriting a matrix}
+mat[7, 1] <- 564 #replaces one point
+mat[, 8] <- 2 #replaces a collumn
+mat[2:5, 4:8] <- 1 #replaces a 4x5 area
+mat[2:5, 4:8] <- c(20, 19, 18, 17) #replaces a 4x5 area with specific repeating values column-wise
+mat[2:5, 4:8] <- matrix(data = c(20:1), nrow = 4, ncol = 5, byrow = TRUE) #replaces a 4x5 area with specific descending values row-wise
+mat[, 8] <- c("a", "b") #replaces column 8 with characters "a" and "b" alternating; turns the numeric matrix into a character matric
+
+mat
+```
+##Lists and Data Frames
+Lists and data frames can be used together to group mixed structures and objects.
+Lists are created using list()
+```{r Lists}
+s <- c("this", "is", "a", "vector", "of", "strings")  # here we have a vector
+m <- matrix(data = 1:40, nrow = 5, ncol = 8)  # this is a matrix
+b <- FALSE  #and this is a logical statement
+l <- list(s, m, b)  # this puts them all together as a list
+l
+```
+To extract elements from a list, use double brackets.
+```{r List extracting}
+l[[2]] #this will pull out element 2 which is the matrix
+```
+```{r List indexing 2}
+l[[2]][2,6] #this will pull out position [2,6] from element 2 of the list
+```
+To reference/extract multiple elements from a list, you would use single bracket notation, which would itself return a list. This is called “list slicing”.
+```{r List slicing}
+l[1:2]  # This is taking just elements 1 and 2 from the list
+```
+Using str() provides details about the elements in a list:
+```{r List details}
+str(l)
+```
+Elements in lists can be named with names()
+```{r List element names}
+names(l) <- c("string", "matrix", "logical")
+names(l)
+```
+Now, you can use the name of an item in the list to refer to it:
+```{r List element names}
+l$string  
+l$matrix[3, 5]  
+```
+##Challenge 4
