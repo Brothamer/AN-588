@@ -47,7 +47,7 @@ a
 ```
 ##Subsetting / Indexing
 Selecting elements from vectors, matrices, and arrays using their index positions in bracket notation
-```{r Arrays}
+```{r Arrays indexing}
 v <- 1:100  #This creates a vector containing all integers from 1 to 100 to use as an example
 v
 
