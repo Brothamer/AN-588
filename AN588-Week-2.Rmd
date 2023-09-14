@@ -154,12 +154,12 @@ Using str() provides details about the elements in a list:
 str(l)
 ```
 Elements in lists can be named with names()
-```{r List element names}
+```{r List element names 1}
 names(l) <- c("string", "matrix", "logical")
 names(l)
 ```
 Now, you can use the name of an item in the list to refer to it:
-```{r List element names}
+```{r List element names 2}
 l$string  
 l$matrix[3, 5]  
 ```
