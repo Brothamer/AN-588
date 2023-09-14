@@ -78,3 +78,24 @@ Extacting every third element of the vector
 every3 <- Ulysses_split[seq(from = 3, to = 21, by = 3)]
 every3
 ```
+
+##Challenge 2
+```{r Challenge 2 matrix}
+mat <- matrix(data = 1:80, nrow = 8, ncol = 10, byrow = FALSE) #creating the matrix
+mat
+```
+Given the matrix, mat, above, extract the 2nd, 3rd, and 6th columns and assign them to the variable x
+```{r Challenge 2 extract}
+x <- mat[c(2,3,6), ]
+x
+```
+Given the matrix, mat, above, extract the 6th to 8th row and assign them to the variable y
+```{r Challenge 2 extract}
+y <- mat[c(6,8), ]
+y
+```
+Given the matrix, mat, above, extract the elements from row 2, column 2 to row 6, column 9 and assign them to the variable z
+```{r Challenge 2 extract}
+z <- c(mat[2,2], mat[6,9])
+z
+```
