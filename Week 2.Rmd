@@ -50,3 +50,31 @@ Vectors and matrices are both types of arrays. They can have any number of dimen
 a <- array(data = 1:90, dim = c(5, 6, 3)) #creating a 3 dimensional array that is 5x6x3
 a
 ```
+##Subsetting / Indexing
+Selecting elements from vectors, matrices, and arrays using their index positions in bracket notation
+```{r Arrays}
+v <- 1:100  #This creates a vector containing all integers from 1 to 100 to use as an example
+v
+
+v[1:15] #select the first 15 elements
+
+v[c(2, 4, 6, 8, 10)] #select a vector of specific elements
+
+v[seq(from = 1, to = 15, by = 2)] #using a function/calculation to subset a vector
+```
+##Challenge 1
+
+Creating a vector of the first sentence of *Ulysses* by James Joyce.
+```{r Challenge 1 vector}
+Ulysses <- c("Stately, plump Buck Mulligan came from the stairhead, bearing a bowl of lather on which a mirror and a razor lay crossed.") #creating the string
+Ulysses
+Ulysses_unpunct <- gsub("[[:punct:]]","",Ulysses) #removing punctuation
+Ulysses_unpunct
+Ulysses_split <- str_split_1(Ulysses_unpunct, " ") #dividing the string into a vector of substrings
+Ulysses_split
+```
+Extacting every third element of the vector
+```{r Challenge 1 subset}
+every3 <- Ulysses_split[seq(from = 3, to = 21, by = 3)]
+every3
+```
