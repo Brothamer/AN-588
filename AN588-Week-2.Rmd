@@ -80,17 +80,17 @@ mat <- matrix(data = 1:80, nrow = 8, ncol = 10, byrow = FALSE) #creating the mat
 mat
 ```
 Given the matrix, mat, above, extract the 2nd, 3rd, and 6th columns and assign them to the variable x
-```{r Challenge 2 extract}
+```{r Challenge 2 extract 1}
 x <- mat[c(2,3,6), ]
 x
 ```
 Given the matrix, mat, above, extract the 6th to 8th row and assign them to the variable y
-```{r Challenge 2 extract}
+```{r Challenge 2 extract 2}
 y <- mat[c(6,8), ]
 y
 ```
 Given the matrix, mat, above, extract the elements from row 2, column 2 to row 6, column 9 and assign them to the variable z
-```{r Challenge 2 extract}
+```{r Challenge 2 extract 3}
 z <- c(mat[2,2], mat[6,9])
 z
 ```
