@@ -15,10 +15,38 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r cars}
-summary(cars)
+##Matrices
+Matrices are collections of vectors
+```{r MAtrices by column}
+m <- matrix(data = c(1, 2, 3, 4), nrow = 2, ncol = 2) #Creating a matrix that fills column-wise
+m
+```
+```{r MAtrices by  row}
+n <- matrix(data = c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3, byrow = TRUE) #Creating a matrix that fills row-wise
+n
+```
+```{r MAtrices by binding vectors}
+v1 <- c(1, 2, 3, 4)
+v2 <- c(6, 7, 8, 9)
+m1 <- rbind(v1, v2) #builds row-wise
+m1
+
+m2 <- cbind(v1, v2) #builds column-wise
+m2
 ```
 
-## Including Plots
+###Metadata about a matrix
 
-You can also embed plots, for example:
+```{r MAtrices metadata}
+class(m1) #object class
+dim(m1) #matrix dimensions
+colnames(m1) #report column names (not defined for this matrix: NULL)
+rownames(m1) #report row names
+(str(m1)) #provides details about any data structure
+```
+##Arrays
+Vectors and matrices are both types of arrays. They can have any number of dimensions but all the elements must be the same class.
+```{r Arrays}
+a <- array(data = 1:90, dim = c(5, 6, 3)) #creating a 3 dimensional array that is 5x6x3
+a
+```
