@@ -8,12 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+#Module 04
 
 ##Matrices
 Matrices are collections of vectors
@@ -133,7 +128,7 @@ mat[, 8] <- c("a", "b") #replaces column 8 with characters "a" and "b" alternati
 
 mat
 ```
-##Lists and Data Frames
+##Lists
 Lists and data frames can be used together to group mixed structures and objects.
 Lists are created using list()
 ```{r Lists}
@@ -169,3 +164,124 @@ l$string
 l$matrix[3, 5]  
 ```
 ##Challenge 4
+Make a nested list of a simplified primate taxonomy
+```{r Challenge 4}
+Lemuroidea <- c("Cheirogaleidae", "Lepilemuridae", "Indriidae", "Lemuridae",
+    "Daubentoniidae")
+Lorisoidea <- c("Lorisidae", "Galagidae")
+Strepsirhini <- list(Lemuroidea, Lorisoidea)
+names(Strepsirhini) <- list("Lemuroidea", "Lorisoidea")
+Strepsirhini
+
+Catarrhini <- c("Cercopithecidae", "Hylobatidae", "Hominidae")
+Platyrrhini <- c("Cebidae", "Atelidae", "pitheciidiae")
+Anthropoidea <- list(Catarrhini, Platyrrhini)
+names(Anthropoidea) <- list("Catarrhini", "Platyrrhini")
+Anthropoidea
+
+Tarsiidae <- "Tarsiidae"
+Tarsioidea <- list(Tarsiidae)
+names(Tarsioidea) <- list("Tarsiidae")
+Tarsioidea
+
+Haplorhini <- list(Anthropoidea, Tarsioidea)
+names(Haplorhini) <- list("Anthropoidea", "Tarsioidea")
+Haplorhini
+
+Primates <- list(Haplorhini, Strepsirhini)
+names(Primates) <- list("Haplorhini", "Strepsirhini")
+Primates
+```
+
+##Data Frames
+The data.frame() command can be used to create dataframes from scratch.
+```{r Data frame from scratch}
+df <- data.frame(firstName = c("Nitin", "Silvy", "Ingrid", "Claire"), major = c("Biology (CM)",
+    "Anthropology (Bio)", "Anthropology (Medical)", "Biology (EEB)"), sex = c("M",
+    "F", "F", "F"), yearInProgram = c(1, 2, 2, 3))
+df
+```
+Rather than creating one from scratch, we more commonly read tabular data into R from a pre-existing data file (i.e., a spreadsheet), which typically results in the table being represented as a dataframe. 
+```{r data frame from file}
+df <- read.csv("C:/Users/brook/OneDrive/Documents/2023_Fall/AN588-Week-2/random-people", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+# only print select columns
+df[, c(1, 3, 4, 11, 12)]
+```
+```{r data frame details}
+str(df)
+```
+You can use bracket notation to index data frames as with other structures.
+```{r data frame indexing}
+df[,3]
+str(df[,3])
+df$name.last
+str(df$name.last)
+df[3]
+str(df[3])
+df["name.last"]
+str(df["name.last"])
+```
+You can add rows (additional cases) or columns (additional variables) to a data frame using rbind() and cbind().
+```{r data frame adding and binding}
+df <- cbind(df, id = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+    17, 18, 19, 20))
+df <- cbind(df, school = c("BU", "BU", "Harvard", "Harvard", "BU", "Boston College",
+    "MIT", "BU", "BU", "UMASS Boston", "Harvard", "BU", "Boston College", "BU",
+    "Harvard", "MIT", "Harvard", "BU", "UMASS Boston", "Harvard"))
+df
+```
+cbind() caused **school** to be added as a *factor*
+Using the $ operator will add **school** as a *character* vector.
+```{r data frame adding using $ operator}
+df$school <- c("BU", "BU", "Harvard", "Harvard", "BU", "Boston College", "MIT",
+    "BU", "BU", "UMASS Boston", "Harvard", "BU", "Boston College", "BU", "Harvard",
+    "MIT", "Harvard", "BU", "UMASS Boston", "Harvard")
+```
+
+##Filtering
+Logical vectors may also be used to subset data frames.
+```{r data frame filtering rows}
+new_df <- df[df$school == "BU", ]
+new_df #This new data frame only has the vectors for which BU in the School factor is TRUE.
+```
+```{r data frame filtering some columns}
+new_df <- df[df$school == "BU", c("name.last", "name.first", "school")]
+new_df #This new data frame only has the vectors for which BU in the School factor is TRUE and it only includes some columns
+```
+
+##Factors, Conversion and Coercion, and Special Data Values
+You can convert factor to character data (and vice versa) using the as.character() or as.factor() commands. You can also convert/coerce any vector to a different class using similar constructs (e.g., as.numeric()), although not all such conversions are really meaningful. Converting factor data to numeric results in the the converted data having the value of R’s internal numeric code for the factor level, while converting character data to numeric results in the data being coerced into the special data value of NA (see below) for missing data.
+
+Finally, R has three special data values that it uses in a variety of situations.
+
+NA (for not available) is used for missing data. Many statistical functions offer the possibility to include as an argument na.rm=TRUE (“remove NAs”) so that NAs are excluded from a calculation.
+Inf (and -Inf) is used when the result of a numerical calculation is too extreme for R to express
+NaN (for not a number) is used when R cannot express the results of a calculation , e.g., when you try to take the square root of a negative number.
+
+##Challenge 5
+Store the following numbers as a 5 x 3 matrix, called “m3”: 3, 0, 1 ,23, 1, 2, 33, 1, 1, 42, 0, 1, 41, 0, 2. Be sure to fill the matrix ROW-WISE.
+
+Then, do the following:
+
+Coerce the matrix to a data frame.
+
+As a data frame, coerce the second column to be logical-valued
+
+As a data frame, coerce the third column to be factor-valued
+
+When you are done, use the str() command to show the data type for each variable in your dataframe.
+```{r Challenge 5}
+m3 <- matrix(data = c(3, 0, 1 ,23, 1, 2, 33, 1, 1, 42, 0, 1, 41, 0, 2), nrow = 5, ncol = 3, byrow = TRUE)
+m3
+df3 <- as.data.frame(m3) #coerces matrix to dataframe
+df3
+df3[,2] <- as.logical(df3[,2]) #coerces column 2 to be logical-valued
+df3[,3] <- as.factor(df3[,3]) #coerces column 3 to be factor-valued
+str(df3) #gives details about dataframe to check data type for each variable
+```
+
+#Module 05
+##Reading from a local file
+```{r local file}
+f <- file.choose() #This opens a window to open files and get the file path
+```
