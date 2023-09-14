@@ -1,5 +1,5 @@
 ---
-title: "Week 2"
+title: "AN588-Week-2"
 author: "Brooke Rothamer"
 date: "2023-09-14"
 output: html_document
