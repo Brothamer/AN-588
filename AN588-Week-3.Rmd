@@ -45,6 +45,14 @@ names(d) #get a list of all the columns (variables) in the dataset
 * What are the median area and population size of all countries in the dataset? HINT: There are a couple of ways to do this… try summary() and median() (for the latter, you’ll need to use the na.rm = TRUE argument)
   + In the summary() function, you can see that the median area is 69,700 and the median population is 4.912e+06.
 
+```{r Challenge 1 part 3.5}
+dMedianArea <- median(d$area, na.rm=TRUE) #must remove NA values
+dMedianPop <- median(d$population, na.rm=TRUE) #must remove NA values
+dMedianArea
+dMedianPop
+```
+Yup, those match what the summary said.
+
 * Create a new pop_density variable in your data frame which is population / area. What are the 10 most dense countries? The 10 least dense? HINT: check out the order() function
 
 ```{r Challenge 1 part 4}
@@ -75,7 +83,7 @@ The median area of the 20 largest countries is 2,553,320. The median population 
 
 * Extract data from all countries beginning with the letters “A” through “F”. What are the mean area and population size of these countries?
 ```{r Challenge 1 part 8}
-dA_F <- d[grep("^[A-F]", d$country), ]
+dA_F <- d[grep("^[A-F]", d$country), ] #grep is a way of pulling something from the dataset #in this case, things that ^ start with A-F
 summary(dA_F)
 ```
 The median area of countries starting with A-F is 51,148. The median population of countries starting with A-F is 4.785e+06.
@@ -129,7 +137,7 @@ abline(v = mean(log(d$population), na.rm = TRUE), col = "blueviolet") #using the
 *The density() function computes a non-parametric estimate of the distribution of a variable, which can be combined with plot() to also yield a graphical view of the distribution of the data. If your data have missing values, then you need to add the argument na.rm=TRUE to the density() function. To superimpose a density() curve on a histogram, you can use the lines(density()) function.
 
 ```{r, Challenge 3, part 3}
-par(mfrow = c(1, 1))  # set up one panel and redraw the log(population) histogram
+par(mfrow = c(1, 1))  # set up one panel
 hist(log(d$population), freq = FALSE, col = "white", main = "My Plot with Mean and Density",
     xlab = "log(population size)", ylab = "density", ylim = c(0, 0.2))
 abline(v = mean(log(d$population), na.rm = TRUE), col = "blue")
@@ -191,9 +199,9 @@ Again using data from the KamilarAndCooperData dataset, plot the relationship be
 
 ```{r Challenge 6 part 1}
 attach(d)
-par(mfrow = c(1, 2))
+par(mfrow = c(1, 2)) #put the next two plots in a 1x2 panel together
 plot(x = Body_mass_female_mean, y = Brain_Size_Female_Mean)
-plot(x = log(Body_mass_female_mean), y = log(Brain_Size_Female_Mean))
+plot(x = log(Body_mass_female_mean), y = log(Brain_Size_Female_Mean)) #transformed with the log of each variable
 ```
 ```{r Challenge 6 part 2}
 detach(d)
@@ -202,23 +210,23 @@ detach(d)
 * ggplot2 is a bit more complicated
 ```{r Challenge 6 part 3}
 p <- ggplot(data = d, aes(x = log(Body_mass_female_mean), y = log(Brain_Size_Female_Mean),
-    color = factor(Family)))  # first, we build a plot object and color points by Family
+    color = factor(Family)))  # first, we build a plot object and color points by Family #family needs to be a factor, not just a character
 p <- p + xlab("log(Female Body Mass)") + ylab("log(Female Brain Size)")  # then we modify the axis labels
-p <- p + geom_point()  # then we make a scatterplot
+p <- p + geom_point(shape="triangle", size=2)  # then we make a scatterplot and control the appearance of the plot points
 p <- p + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
 p  # and, finally, we plot the object
 ```
 * Using {ggplot2}, we can also easily set up a grid for “faceting”” by a grouping variable.
 
 ```{r Challenge 6 part 4}
-p <- p + facet_wrap(~Family, ncol = 4)
+p <- p + facet_wrap(~Family, ncol = 4) #break it out into facets by family
 p <- p + theme(legend.position = "none")
 p
 ```
 * And we can easily add regression lines to our plot. Here, we add a linear model to each facet.
 
 ```{r Challenge 6 part 5}
-p <- p + geom_smooth(method = "lm", fullrange = TRUE)
+p <- p + geom_smooth(method = "lm", fullrange = TRUE) #lm stands for linear model (make it a line) #smooth makes it stretch across the whole graph
 p
 ```
 
@@ -317,17 +325,18 @@ s <- d %>%
 s
 ```
 * Acccording to Kamilar & Cooper’s (2013) dataset, what is the average male and female size, and body mass dimorphism of my two main study species (vervet monkeys, Chlorocebus pygerythrus; and woolly monkeys, Lagothrix lagotricha)? Which has a larger average female body mass? Which is more sexually dimorphic?
+
+```{r Challenge 8 part 2}
+
+```
   + Vervets: average male size=5071.2,	average female size=3575.8, average BMD=1.418
   + Woolly monkeys: average male size=7280.0,	average female size=7020.0, average BMD=1.037
   + Vervets are more sexually dimorphic
 
 * Compare the body size of my two main study taxa at the Family level (i.e., Cercopithecidae vs. Atelidae) by plotting (using {ggplot2}) the body mass of males and females and sexual dimorphism. If you can, make the Cercopithecid boxes green, and the Atelid boxes purple.
 
-```{r Challenge 8 part 2}
+```{r Challenge 8 part 3}
 
-p <- ggplot(data = s, aes(x = log(avgF), y = log(avgM), color=factor(Family)))
-p <- p + geom_point()
-p
 ```
 Man, I don't know on this one
 
@@ -335,35 +344,36 @@ Man, I don't know on this one
 
 # Module 07: Central Tendency and Variance 
 
-* Population = includes all of the elements from a set of data (e.g., all of the vervet monkeys in the world) = N
-* Sample = one or more observations from a population (e.g., the set of vervets trapped during a field season in South Africa, the set of vervet skeletons found in a museum) = n
-* Parameter = a measurable characteristic of a population (e.g., the mean value of the femur length of all vervets)
-* Statistic = a measurable characteristic about a sample, described by a function applied to the sample (e.g., the mean length of vervet monkey femora found at the American Museum of Natural History).
+```{r Mod 7 prelim}
+library(sciplot)
+```
 
-NOTE: A statistic becomes an estimator when it is used to infer some property of the population, like an unknown parameter (e.g., if we want to use the mean length of vervet monkey femora to infer the mean femur length of all vervet monkeys).
+* **Population** = includes all of the elements from a set of data (e.g., all of the vervet monkeys in the world) = N
+* Sample = one or more observations from a population (e.g., the set of vervets trapped during a field season in South Africa, the set of vervet skeletons found in a museum) = n
+* **Parameter** = a measurable characteristic of a population (e.g., the mean value of the femur length of all vervets)
+* **Statistic** = a measurable characteristic about a sample, described by a function applied to the sample (e.g., the mean length of vervet monkey femora found at the American Museum of Natural History).
+
+NOTE: A **statistic** becomes an **estimator** when it is used to infer some property of the population, like an unknown parameter (e.g., if we want to use the mean length of vervet monkey femora in a museum to infer the mean femur length of all vervet monkeys).
 
 ##Measures of Central Tendancy
 
-* Mode = most common measurement of values observed
-* Median = middle value in a rank ordered series of values
-* Mean = the sum of measured values divided by n = the average or the arithemetic mean
-* Harmonic mean = the reciprocal of the average of the reciprocals of a set of values. This measure is particularly useful for understanding the mean of a set of ratios or rates, because it will equalize the weights of each data point.
-* Geometric mean = a measure of central tendency for processes that are multiplicative rather than additive = the nth root of the product of the values (for the mathematically inclined, it also = the antilog of the averaged log values). This measure is particularly useful when the values are not independent of each other, or if they make large fluctuations.
+* **Mode** = most common measurement of values observed
+* **Median** = middle value in a rank ordered series of values
+* **Mean** = the sum of measured values divided by n = the average or the arithemetic mean
+* **Harmonic mean** = the reciprocal of the average of the reciprocals of a set of values. This measure is particularly useful for understanding the mean of a set of ratios or rates, because it will equalize the weights of each data point.
+* **Geometric mean** = a measure of central tendency for processes that are multiplicative rather than additive = the nth root of the product of the values (for the mathematically inclined, it also = the antilog of the averaged log values). This measure is particularly useful when the values are not independent of each other, or if they make large fluctuations.
 
 ### Challenge 1
 
 Given a vector, x <- c(1,2,3,4,5,6,7,8,9,10,100,1000), write a function to determine the geometric mean of the values in a vector. Remember the general form for functions is:
 
-function name <- function(arguments to pass){code to run}
+* function name <- function(arguments to pass){code to run}
 
 ```{r Challenge 1, step 1}
 x <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 100, 200, 1000)
-mean <- function(x) {
-    prod(x)^(1/length(x))
-}
-mean(x)
+geomean <- function(x) {prod(x)^(1/length(x))}
+geomean(x)
 ```
-
 HINT: The argument na.rm = TRUE and the function na.omit() may help you write more generic functions that exclude those pesky NA values.
 
 ## Measures of Spread
@@ -375,9 +385,62 @@ A measure of spread or variability in a dataset is one of the most important sum
 * Write a function to calculate the sum of squares for a vector.
 
 ```{r Challenge 2, step 1}
-ss1 <- function(x) {
-    sum((x - mean(x))^2)
-}
+ss1 <- function(x) {sum((x - mean(x))^2)}
 ss1(x)
 ```
+Or
+```{r Challenge 2, step 2}
+ss2 <- function(x) {sum(x^2) - length(x) * mean(x)^2}
+ss2(x)
+```
+Or
+```{r Challenge 2, step 3}
+ss3 <- function(x) {sum(x^2) - (sum(x))^2/length(x)}
+ss3(x)
+```
+
+The sum of squares increases with sample size. We are then more interested in the average deviation of values from the mean rather than the straight sum of squares,  i.e., a mean squared deviation. This is the definition of the variability or variance in a dataset. 
+
+**population variance** = sum of squares / N
+
+```{r Challenge 2, step 4}
+pop_v <- function(x) {sum((x - mean(x))^2)/(length(x))}
+pop_v(x)
+```
+
+If, however, we have not measured all of the individual cases in population… if we are, instead, dealing with a sample from the population and are trying to use that sample to say something about the population from which it is drawn then we need to use a slightly different formula to get an unbiased estimate of the population variance. Such an estimate for a population parameter, based on data from a sample, is calculated as:
+
+**sample variance** = estimator of the population variance = sum of squares / (n - 1)
+
+n - 1 is the number of degrees of freedom implied by the sample. The degrees of freedom is the number of values used to calculate a sample statistic that are free to vary. We used n observations to calculate the mean of our sample, and that implies n - 1 degrees of freedom. *if every measure can be whatever, the last one has to be some specific number in order to get that measure of central tendency from the set of numbers.*
+
+###Challenge 3
+
+```{r Challenge 3 step 1}
+sample_v <- function(x) {sum((x - mean(x))^2)/(length(x) - 1)}
+sample_v(x)
+```
+##Interesting Questions to Ask:
+
+* How does Sample Variance compare to Population Variance? What happens to the sample variance as sample size increases?
+* For a random variable, how is variance related to sample size? Let’s explore this…
+
+1. Set up a plot:
+```{r interesting question step 1}
+plot(c(0, 50), c(0, 15), type = "n", xlab = "Sample size", ylab = "Variance")
+```
+2. Create a random variable drawn from a normal distribution using the rnorm() function. Let’s use for loops to do this for samples of size 5, 10, 15… up to 50, with 50 replicates at each size. The structure for for loops is…
+
+```{r interesting question step 2}
+for (n in seq(5, 50, 5)) # samples of 5, 10, 15... 15...
+{
+    for (i in 1:50) # 50 replicates for (i in 1:50) # 50 replicates
+    {
+        x <- rnorm(n, mean = 10, sd = 2)
+        points(n, var(x))
+    }
+}
+
+```
+
 

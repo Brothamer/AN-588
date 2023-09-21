@@ -391,7 +391,7 @@ summarize the variables in that data frame.</p>
 <pre><code>## Using libcurl 7.84.0 with Schannel</code></pre>
 <pre class="r"><code>file &lt;- curl(&quot;https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/Country-Data-2016.csv&quot;) #loads file straight from github
 d &lt;- read.csv(file, header = TRUE, sep = &quot;,&quot;, stringsAsFactors = FALSE) #reads in the csv file as a dataframe
-head(d) #check that the dataframe is correct</code></pre>
+head(d) #check that the dataframe is correct by looking at the first few (6) lines</code></pre>
 <pre><code>##          country population    area                      govt_form birthrate
 ## 1    Afghanistan   32564342  652230               islamic republic      38.6
 ## 2        Albania    3029278   28748                       republic      12.9
@@ -413,7 +413,7 @@ head(d) #check that the dataframe is correct</code></pre>
 ## 4            59      1              0
 ## 5             4      0              0
 ## 6             4     34              0</code></pre>
-<pre class="r"><code>summary(d)</code></pre>
+<pre class="r"><code>summary(d) #basic descriptive summary of each column (factor) depending on the format of that data (numeric, character, logic, etc.)</code></pre>
 <pre><code>##    country            population             area           govt_form        
 ##  Length:248         Min.   :3.000e+01   Min.   :       0   Length:248        
 ##  Class :character   1st Qu.:2.991e+05   1st Qu.:    1769   Class :character  
@@ -446,7 +446,7 @@ head(d) #check that the dataframe is correct</code></pre>
 ##  3rd Qu.:  6.00   3rd Qu.: 33.00   3rd Qu.:  44.00   3rd Qu.: 0.0000  
 ##  Max.   :301.00   Max.   :340.00   Max.   :1856.00   Max.   :12.0000  
 ##  NA&#39;s   :3        NA&#39;s   :3        NA&#39;s   :3         NA&#39;s   :3</code></pre>
-<pre class="r"><code>names(d)</code></pre>
+<pre class="r"><code>names(d) #get a list of all the columns (variables) in the dataset</code></pre>
 <pre><code>##  [1] &quot;country&quot;        &quot;population&quot;     &quot;area&quot;           &quot;govt_form&quot;     
 ##  [5] &quot;birthrate&quot;      &quot;deathrate&quot;      &quot;life_expect&quot;    &quot;mammals&quot;       
 ##  [9] &quot;birds&quot;          &quot;reptiles&quot;       &quot;amphibians&quot;     &quot;fishes&quot;        
@@ -459,6 +459,15 @@ median() (for the latter, you’ll need to use the na.rm = TRUE argument)
 <li>In the summary() function, you can see that the median area is
 69,700 and the median population is 4.912e+06.</li>
 </ul></li>
+</ul>
+<pre class="r"><code>dMedianArea &lt;- median(d$area, na.rm=TRUE) #must remove NA values
+dMedianPop &lt;- median(d$population, na.rm=TRUE) #must remove NA values
+dMedianArea</code></pre>
+<pre><code>## [1] 69700</code></pre>
+<pre class="r"><code>dMedianPop</code></pre>
+<pre><code>## [1] 4911766</code></pre>
+<p>Yup, those match what the summary said.</p>
+<ul>
 <li>Create a new pop_density variable in your data frame which is
 population / area. What are the 10 most dense countries? The 10 least
 dense? HINT: check out the order() function</li>
@@ -2635,7 +2644,7 @@ population of the 20 largest countries is 4.343e+07.</p>
 through “F”. What are the mean area and population size of these
 countries?</li>
 </ul>
-<pre class="r"><code>dA_F &lt;- d[grep(&quot;^[A-F]&quot;, d$country), ]
+<pre class="r"><code>dA_F &lt;- d[grep(&quot;^[A-F]&quot;, d$country), ] #grep is a way of pulling something from the dataset #in this case, things that ^ start with A-F
 summary(dA_F)</code></pre>
 <pre><code>##    country            population             area           govt_form        
 ##  Length:78          Min.   :5.960e+02   Min.   :      14   Length:78         
@@ -2747,7 +2756,7 @@ yield a graphical view of the distribution of the data. If your data
 have missing values, then you need to add the argument na.rm=TRUE to the
 density() function. To superimpose a density() curve on a histogram, you
 can use the lines(density()) function.</p>
-<pre class="r"><code>par(mfrow = c(1, 1))  # set up one panel and redraw the log(population) histogram
+<pre class="r"><code>par(mfrow = c(1, 1))  # set up one panel
 hist(log(d$population), freq = FALSE, col = &quot;white&quot;, main = &quot;My Plot with Mean and Density&quot;,
     xlab = &quot;log(population size)&quot;, ylab = &quot;density&quot;, ylim = c(0, 0.2))
 abline(v = mean(log(d$population), na.rm = TRUE), col = &quot;blue&quot;)
@@ -3428,6 +3437,72 @@ the Cercopithecid boxes green, and the Atelid boxes purple.</li>
 </div>
 <div id="module-07-central-tendency-and-variance" class="section level1">
 <h1>Module 07: Central Tendency and Variance</h1>
+<ul>
+<li>Population = includes all of the elements from a set of data (e.g.,
+all of the vervet monkeys in the world) = N</li>
+<li>Sample = one or more observations from a population (e.g., the set
+of vervets trapped during a field season in South Africa, the set of
+vervet skeletons found in a museum) = n</li>
+<li>Parameter = a measurable characteristic of a population (e.g., the
+mean value of the femur length of all vervets)</li>
+<li>Statistic = a measurable characteristic about a sample, described by
+a function applied to the sample (e.g., the mean length of vervet monkey
+femora found at the American Museum of Natural History).</li>
+</ul>
+<p>NOTE: A statistic becomes an estimator when it is used to infer some
+property of the population, like an unknown parameter (e.g., if we want
+to use the mean length of vervet monkey femora to infer the mean femur
+length of all vervet monkeys).</p>
+<p>##Measures of Central Tendancy</p>
+<ul>
+<li>Mode = most common measurement of values observed</li>
+<li>Median = middle value in a rank ordered series of values</li>
+<li>Mean = the sum of measured values divided by n = the average or the
+arithemetic mean</li>
+<li>Harmonic mean = the reciprocal of the average of the reciprocals of
+a set of values. This measure is particularly useful for understanding
+the mean of a set of ratios or rates, because it will equalize the
+weights of each data point.</li>
+<li>Geometric mean = a measure of central tendency for processes that
+are multiplicative rather than additive = the nth root of the product of
+the values (for the mathematically inclined, it also = the antilog of
+the averaged log values). This measure is particularly useful when the
+values are not independent of each other, or if they make large
+fluctuations.</li>
+</ul>
+<div id="challenge-1-1" class="section level3">
+<h3>Challenge 1</h3>
+<p>Given a vector, x &lt;- c(1,2,3,4,5,6,7,8,9,10,100,1000), write a
+function to determine the geometric mean of the values in a vector.
+Remember the general form for functions is:</p>
+<p>function name &lt;- function(arguments to pass){code to run}</p>
+<pre class="r"><code>x &lt;- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 100, 200, 1000)
+mean &lt;- function(x) {
+    prod(x)^(1/length(x))
+}
+mean(x)</code></pre>
+<pre><code>## [1] 13.50559</code></pre>
+<p>HINT: The argument na.rm = TRUE and the function na.omit() may help
+you write more generic functions that exclude those pesky NA values.</p>
+</div>
+<div id="measures-of-spread" class="section level2">
+<h2>Measures of Spread</h2>
+<p>A measure of spread or variability in a dataset is one of the most
+important summary statistics to calculate. The range (min to max) is one
+measure of spread as is the interquartile range (25th to 75th quartile).
+As we’ve seen, these are returned by the summary() function.</p>
+<div id="challenge-2-1" class="section level3">
+<h3>Challenge 2</h3>
+<ul>
+<li>Write a function to calculate the sum of squares for a vector.</li>
+</ul>
+<pre class="r"><code>ss1 &lt;- function(x) {
+    sum((x - mean(x))^2)
+}
+ss1(x)</code></pre>
+<pre><code>## [1] 1017620</code></pre>
+</div>
+</div>
 </div>
 
 
