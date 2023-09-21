@@ -1,0 +1,329 @@
+---
+title: "AN588-Week-3"
+author: "Brooke Rothamer"
+date: "2023-09-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 06: Useful Procedures for Exploratory Data Analysis
+## Univariate Data
+
+* head() shows just the first entries in a data frame.
+* tail() shows just the last entries in a data frame
+* str() gives details about the structure of an object
+*It is a good idea to use these right after loading in a dataset.*
+* dim() gives the number of rows and columns in a dat frame
+* names(), colnmes(), and rownames() can give the names of segments of the dataset
+* attach() can be used to attach one dataframe so that you can quickly reference variables in that dataframe without naming the dataframe and using $ or bracket notation.
+* with() is similar to attach() but works better for use in functions
+
+* Summary gives an overview of each column in a dataframe.
+  + For numeric values, this includes the 25th, median, and 75th percentile, the max, and the number of NA values.
+  + For factor data, it gives a count of each factor.
+
+***
+
+### Challenge 1
+
+Load the Country-Data-2016 dataset into a data frame variable, d, and summarize the variables in that data frame.
+```{r Challenge 1 part 1, warning=FALSE}
+library(curl)
+file <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/Country-Data-2016.csv") #loads file straight from github
+d <- read.csv(file, header = TRUE, sep = ",", stringsAsFactors = FALSE) #reads in the csv file as a dataframe
+head(d) #check that the dataframe is correct
+```
+```{r Challenge 1 part 2}
+summary(d)
+```
+```{r Challenge 1 part 3}
+names(d)
+```
+* What are the median area and population size of all countries in the dataset? HINT: There are a couple of ways to do this… try summary() and median() (for the latter, you’ll need to use the na.rm = TRUE argument)
+  + In the summary() function, you can see that the median area is 69,700 and the median population is 4.912e+06.
+
+* Create a new pop_density variable in your data frame which is population / area. What are the 10 most dense countries? The 10 least dense? HINT: check out the order() function
+
+```{r Challenge 1 part 4}
+d$pop_density <- d$population/d$area
+names(d)
+head(d)
+```
+* What are the 10 most dense countries? The 10 least dense? HINT: check out the order() function
+
+```{r Challenge 1 part 5}
+d[order(d$pop_density),] #order dataframe d by variable pop_density
+```
+The 10 least dense countries are South Georgia and South Sandwich Islands, Greenland, Falkland Islands, Pitcairn Islands, Mongolia, Western Sahara, French Guiana, Namibia, Australia, and Iceland.
+
+```{r Challenge 1 part 6}
+d[order(-d$pop_density),] #add a negative sign to make it descend
+```
+The 10 most dense countries are Macau, Monaco, Holy See (Vatican City), Singapore, Hong Kong, Gibraltar, Bahrain, Maldives, Malta, and Bermuda.
+
+* Extract data from the 20 largest countries into a new variable. What are the median area and population size of these countries?
+```{r Challenge 1 part 7}
+dArea <- d[order(-d$area), ]
+d20 <- dArea[1:20, ]
+d20
+summary(d20)
+```
+The median area of the 20 largest countries is 2,553,320. The median population of the 20 largest countries is 4.343e+07.
+
+* Extract data from all countries beginning with the letters “A” through “F”. What are the mean area and population size of these countries?
+```{r Challenge 1 part 8}
+dA_F <- d[grep("^[A-F]", d$country), ]
+summary(dA_F)
+```
+The median area of countries starting with A-F is 51,148. The median population of countries starting with A-F is 4.785e+06.
+
+### Challenge 2
+
+* The boxplot() function provides a box-and-whiskers visual representation of the five-number summary plus outliers that go beyond the bulk of the data. The function balks if you pass it nonnumeric data, so you may need to reference columns specifically using either bracket notation or the $ operator.
+* The barplot() function is useful for crude data, with bar height proportional to the value of the variable. The function dotchart() provides a similar graphical summary.
+* The par() command will let you set up a grid of panel in which to plot. Here, I set up a two row by three column grid.
+
+Make boxplots of the raw population and area data, then do the same after log() transforming these variables.
+
+```{r, Challenge 2 part 1}
+par(mfrow = c(2, 3)) #displays the following plots in a 2 row by 3 column grid
+boxplot(d$population)
+boxplot(log(d$population))
+boxplot(d$area)
+boxplot(log(d$area))
+barplot(d$population)
+barplot(d$area)
+```
+### Challenge 3
+
+* The hist() function returns a histogram showing the complete empirical distribution of the data in binned categories, which is useful for checking skewwness of the data, symmetry, multi-modality, etc. 
+  + Setting the argument freq=FALSE will scale the Y axis to represent the proportion of observations falling into each bin rather than the count.
+  
+Make histograms of the log() transformed population and area data from the Country-Data-2016 file. Explore what happens if you set freq=FALSE versus the default of freq=TRUE.
+
+```{r, Challenege 3 part 1}
+par(mfrow = c(1, 2))  # gives us two panels
+hist(log(d$population), freq = FALSE, col = "aquamarine", 
+     main = "Plot 1", #labels the plot
+     xlab = "log(population size)", #labels the x variable
+    ylab = "density", #labels the y variable
+    ylim = c(0, 0.2)) #sets the y axis limit
+hist(log(d$area), freq = FALSE, col = "aquamarine", main = "Plot 2", xlab = "log(area)",
+    ylab = "density", ylim = c(0, 0.2))
+```
+* NOTE: You can add a line to your histograms (e.g., to show the mean value for a variable) using the abline() command, with arguments. For examaple, to show a single vertical line representing the mean log(population size), you would add the argument v=mean(log(population))).
+
+```{r, Challenege 3 part 2}
+par(mfrow = c(1, 1))
+hist(log(d$population), freq = FALSE, col = "aquamarine", 
+     main = "Plot 1", #labels the plot
+     xlab = "log(population size)", #labels the x variable
+    ylab = "density", #labels the y variable
+    ylim = c(0, 0.2)) #sets the y axis limit
+abline(v = mean(log(d$population), na.rm = TRUE), col = "blueviolet") #using the panel format makes it easiest to just have this line add to the existing plot in the panel
+```
+
+*The density() function computes a non-parametric estimate of the distribution of a variable, which can be combined with plot() to also yield a graphical view of the distribution of the data. If your data have missing values, then you need to add the argument na.rm=TRUE to the density() function. To superimpose a density() curve on a histogram, you can use the lines(density()) function.
+
+```{r, Challenge 3, part 3}
+par(mfrow = c(1, 1))  # set up one panel and redraw the log(population) histogram
+hist(log(d$population), freq = FALSE, col = "white", main = "My Plot with Mean and Density",
+    xlab = "log(population size)", ylab = "density", ylim = c(0, 0.2))
+abline(v = mean(log(d$population), na.rm = TRUE), col = "blue")
+lines(density(log(d$population), na.rm = TRUE), col = "green")
+```
+
+### Challenge 4
+
+* The table() function can be used to summarize counts and proportions for categorical variables in your dataset.
+
+Using the table() function, find what is the most common form of government in the Country-Data-2016 dataset. How many countries have that form? HINT: We can combine table() with sort() and the argument decreasing=TRUE to get the desired answered straight away:
+
+```{r, Challenge 4 part 1}
+sort(table(d$govt_form), decreasing = TRUE)
+```
+The most common form of government is a republic with 127 countries having a republic government.
+
+## Multivariate Data
+
+### Challenge 5
+Multiple boxplots or histograms can be laid out side-by-side or overlaid. For boxplots, the ~ operator can be read as “by”.
+
+Read in the dataset KamilarAndCooperData, which contains a host of information from about 213 living primate species.
+
+Spend some time exploring the data and then make boxplots of log(female body mass) ~ family. Try doing this with {base} graphics and then look at how we might do in in {ggplot2}, which provides a standard “grammar of graphics”
+
+```{r Challenge 5 part 1}
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/KamilarAndCooperData.csv")
+d <- read.csv(f, header = TRUE, stringsAsFactors = FALSE)
+attach(d)
+head(d)
+```
+```{r Challenge 5 part 2}
+summary(d)
+```
+```{r Challenge 5 part 3}
+boxplot(log(Body_mass_female_mean) ~ Family, d)
+```
+```{r Challenge 5 part 4}
+detach(d)
+```
+
+Alternatively, plotting using {ggplot2}… notice how each novel command is being added to the already-saved initial command? This is for ease of reading and understanding how we’re building the figure. All of this could also go on one line (and is read by the computer as such in the final version of the object p), but to make it easier to understand what each component it doing, we often build graphs in {ggplot2} using the below method:
+
+```{r Challenge 5 part 5}
+library(ggplot2) #load in ggplot2
+p <- ggplot(data = d, aes(x = Family, y = log(Body_mass_female_mean)))  #define the variables
+p <- p + geom_boxplot()  #graph them in a boxplot
+p <- p + theme(axis.text.x = element_text(angle = 90))  #put x-axis names at 90deg
+p <- p + ylab("log(Female Body Mass)")  #rename y-axis title
+p  #the graph
+```
+
+### Challenge 6
+
+* Scatterplots are a natural tool for visualizing two continuous variables and can be made easily with the plot(x=XXX, y=YYY) function in {base} graphics (where XXX* and YYY** denote the names of the two variables you wish to plot). Transformations of the variables, e.g., log or square-root (sqrt()), may be necessary for effective visualization.
+
+Again using data from the KamilarAndCooperData dataset, plot the relationship between female body size and female brain size. Then, play with log transforming the data and plot again.
+
+```{r Challenge 6 part 1}
+attach(d)
+par(mfrow = c(1, 2))
+plot(x = Body_mass_female_mean, y = Brain_Size_Female_Mean)
+plot(x = log(Body_mass_female_mean), y = log(Brain_Size_Female_Mean))
+```
+```{r Challenge 6 part 2}
+detach(d)
+```
+
+* ggplot2 is a bit more complicated
+```{r Challenge 6 part 3}
+p <- ggplot(data = d, aes(x = log(Body_mass_female_mean), y = log(Brain_Size_Female_Mean),
+    color = factor(Family)))  # first, we build a plot object and color points by Family
+p <- p + xlab("log(Female Body Mass)") + ylab("log(Female Brain Size)")  # then we modify the axis labels
+p <- p + geom_point()  # then we make a scatterplot
+p <- p + theme(legend.position = "bottom", legend.title = element_blank())  # then we modify the legend
+p  # and, finally, we plot the object
+```
+* Using {ggplot2}, we can also easily set up a grid for “faceting”” by a grouping variable.
+
+```{r Challenge 6 part 4}
+p <- p + facet_wrap(~Family, ncol = 4)
+p <- p + theme(legend.position = "none")
+p
+```
+* And we can easily add regression lines to our plot. Here, we add a linear model to each facet.
+
+```{r Challenge 6 part 5}
+p <- p + geom_smooth(method = "lm", fullrange = TRUE)
+p
+```
+
+### Challenge 7
+
+Build your own bivariate scatterplot using the KamilarAndCooperData dataset.
+
+```{r Challenge 7 part 1}
+p <- ggplot(data = d, aes(x = log(Brain_Size_Species_Mean), y = log( MeanGroupSize )))
+p <- p + geom_point()
+p <- p + geom_smooth(method = "lm", color="aquamarine")
+p
+```
+
+### Aggregate Statistics and the {dplyr} Package
+
+To calculate summary statistics for groups of observations in a data frame, there are many different approaches. One is to use the aggregate() function from the {stats} package (a standard package), which provides a quick way to look at summary statistics for sets of observations. Here, we apply a particular function (FUN = "mean") to mean female body mass, grouped by Family.
+
+```{r Aggregate part 1}
+aggregate(d$Body_mass_female_mean ~ d$Family, FUN = "mean", na.rm = TRUE)
+```
+Or
+```{r Aggregate part 2}
+aggregate(x = d["Body_mass_female_mean"], by = d["Family"], FUN = "mean", na.rm = TRUE)
+```
+
+An easier way to summarize data is to use the package {dplyr}, which provides “a flexible grammar of data manipulation” that includes a set of verbs that can be used to perform useful operations on data frames. Before using {dplyr} for this, let’s look in general at what it can do…
+```{r Aggregate part 3}
+library(dplyr)
+s <- filter(d, Family == "Hominidae" & Mass_Dimorphism > 2)
+head(s)  # filtering a data frame for certain rows...
+```
+```{r Aggregate part 4}
+s <- arrange(d, Family, Genus, Body_mass_male_mean)  # rearranging a data frame...
+head(s)
+```
+```{r Aggregate part 5}
+s <- select(d, Family, Genus, Body_mass_male_mean)  # selecting specific columns...
+head(s)
+```
+```{r Aggregate part 6}
+s <- rename(d, Female_Mass = Body_mass_female_mean)
+head(s$Female_Mass)  # renaming columns...
+```
+```{r Aggregate part 7}
+s <- mutate(d, Binomial = paste(Genus, Species, sep = " "))
+head(s$Binomial)  # and adding new columns...
+```
+```{r Aggregate part 8}
+s <- summarise(d, avgF = mean(Body_mass_female_mean, na.rm = TRUE), avgM = mean(Body_mass_male_mean,
+    na.rm = TRUE)) #Summarize with more convenient functions than aggregate
+s
+```
+The group_by() function allows you to apply summary functions to sets of observations defined by a categorical variable, as above with with aggregate().
+```{r Aggregate part 9}
+byFamily <- group_by(d, Family)
+byFamily
+```
+```{r Aggregate part 10}
+s <- summarise(byFamily, avgF = mean(Body_mass_female_mean, na.rm = TRUE), avgM = mean(Body_mass_male_mean,
+    na.rm = TRUE))
+s
+```
+
+### Piping
+* One other cool thing about the {dplyr} package is that it provides a convenient way to “pipe” together operations on a data frame using the %>% operator. This means that each line of code after the operator is implemented on the product of the line of code before the operator.In this way, you can use piping to build, step by step, a more complicated output.
+
+As an example, the line of code, below, accomplishes the same as the multiple line of code in the previous chunk (although it is only one line of code, I’ve separated it by pipes for ease of reading and understanding (see hashes for a descriptor of what each pipe section accomplishes)… it could also be written as one continuous line):
+
+```{r Piping part 1}
+s <-                                                             #to create dataframe "s"
+  d %>%                                                          #take dataframe "d"
+  group_by(Family) %>%                                           #Group it by Family
+  summarise(avgF = mean(Body_mass_female_mean, na.rm=TRUE),      #And calculate mean male BM
+            avgM = mean(Body_mass_male_mean, na.rm=TRUE))        #And mean female BM
+s
+```
+Piping allows us to keep a clean and readable workflow without having to create numerous intermediate dataframes, as well as offering us a shorthand that accomplishes one complicated process with one simple-to-breakdown command.
+
+### Challenge 8
+
+* In one line of code, do the following:
+
+  + Add a variable, Binomial to our data frame d, which is a concatenation of the Genus and Species…
+  + Trim the data frame to only include the variables Binomial, Family, Body_mass_female_mean, Body_mass_male_mean and Mass_Dimorphism…
+  + Group these by Binomial (in other words, by species but with full binomial nomenclature)…
+  + And calculate the average value for female body mass, male body mass, and mass dimorphism.
+
+```{r Challenge 8 part 1}
+s <- d %>%
+    mutate(Binomial = paste(Genus, Species, sep = " ")) %>% #Add
+    select(Binomial, Body_mass_female_mean, Body_mass_male_mean, Mass_Dimorphism) %>% #Trim
+    group_by(Binomial) %>% #Group
+    summarise(avgF = mean(Body_mass_female_mean, na.rm = TRUE), avgM = mean(Body_mass_male_mean,
+        na.rm = TRUE), avgBMD = mean(Mass_Dimorphism, na.rm = TRUE)) #Calculate the average
+s
+```
+* Acccording to Kamilar & Cooper’s (2013) dataset, what is the average male and female size, and body mass dimorphism of my two main study species (vervet monkeys, Chlorocebus pygerythrus; and woolly monkeys, Lagothrix lagotricha)? Which has a larger average female body mass? Which is more sexually dimorphic?
+  + Vervets: average male size=5071.2,	average female size=3575.8, average BMD=1.418
+  + Woolly monkeys: average male size=7280.0,	average female size=7020.0, average BMD=1.037
+  + Vervets are more sexually dimorphic
+
+* Compare the body size of my two main study taxa at the Family level (i.e., Cercopithecidae vs. Atelidae) by plotting (using {ggplot2}) the body mass of males and females and sexual dimorphism. If you can, make the Cercopithecid boxes green, and the Atelid boxes purple.
+
+```{r Challenge 8 part 2}
+
+```
+Man, I don't know on this one
