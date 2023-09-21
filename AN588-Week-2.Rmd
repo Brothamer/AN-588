@@ -61,6 +61,7 @@ v[seq(from = 1, to = 15, by = 2)] #using a function/calculation to subset a vect
 
 Creating a vector of the first sentence of *Ulysses* by James Joyce and removing punctuation.
 ```{r Challenge 1 vector}
+library(stringr) #load in files in markdown file
 Ulysses <- c("Stately, plump Buck Mulligan came from the stairhead, bearing a bowl of lather on which a mirror and a razor lay crossed.") #creating the string
 Ulysses
 Ulysses_unpunct <- gsub("[[:punct:]]","",Ulysses) #removing punctuation
