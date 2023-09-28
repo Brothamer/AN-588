@@ -165,3 +165,163 @@ d <- as.data.frame(cbind(x, fx))
 p <- ggplot(data = d, aes(x = x, y = fx)) + xlab("x") + ylab("f(x)") + geom_line()
 p
 ```
+
+We can use manipulate to show this interactively. Reminder that manipulate has to be entered directly in the console.
+
+```{r Random Variables 3, eval=FALSE}
+library(manipulate)
+manipulate(ggplot(data = d, aes(x = x, y = fx)) + xlab("x") + ylab("f(x)") +
+    geom_line() + geom_polygon(data = data.frame(xvals = c(0, n, n, 0), fxvals = c(0,
+    K * n^(a - 1) * (1 - n)^(b - 1), 0, 0)), aes(x = xvals, y = fxvals)) + ggtitle(paste("Area Under Function = ",
+    0.5 * n * K * n^(a - 1) * (1 - n)^(b - 1), sep = " ")), n = slider(0, 1,
+    initial = 0.5, step = 0.01))
+```
+
+The shaded area represents the **cumulative probability** integrated across f(x) from −inf to x.
+
+The **cumulative distribution function**, or **CDF**, of a random variable is defined as the probability of observing a random variable X taking the value of x or less, i.e., F(x) = Pr (X ≤ x).
+
+* This definition applies regardless of whether X is discrete or continuous. Note here we are using F(x) for the cumulative distribution function rather than f(x), which we use for the probability density function. For a continuous variable, the PDF is simply the first derivative of the CDF, i.e., $f(x) = d F(x)
+
+```{r Random Variables 4}
+x <- seq(from = 0, to = 1, by = 0.005)
+prob <- 0.5 * x * K * x^(a - 1) * (1 - x)^(b - 1)
+barplot(prob, names.arg = x, space = 0, main = "Cumulative Probability", xlab = "x",
+    ylab = "Pr(X ≤ x)")
+```
+
+The built in R function for the Beta Distribution, pbeta(), can give us the cumulative probability directly, if we specify the values of α = 2 and β = 1.
+
+```{r Random Variables 5}
+pbeta(0.75, 2, 1)  # cumulative probability for x ≤ 0.75
+
+pbeta(0.5, 2, 1)  # cumulative probability for x ≤ 0.50
+```
+
+In general, we find the cumulative probability for a continuous random variable by calculating the area under the probability density function of interest from −∞ to x. This is what is is being returned from pbeta().
+
+The other related **Beta Distribution** functions, e.g., rbeta(), dbeta(), and qbeta(), are also useful. rbeta() draws random observations from a specfied beta distribution. dbeta() gives the point estimate of the beta density function at the value of the argument x, and qbeta() is essentially the converse of pbeta(), *i.e., it tells you the value of x that is associated with a particular cumulative probability, or quantile, of the cumulative distribution function. Other PMFs and PDFs have comparable r, d, p, and q functions.*
+
+We can define the **survival function** for a random variable X as S(x) = Pr (X > x) = 1 - Pr (X ≤ x) = 1 - f(x)
+
+Finally, we can define the *“qth”" quantile of a cumulative distibution function* as the value of x at which the CDF has the value “q”, i.e., F(xq)=q.
+
+### Expected Mean and Variance of Random Models
+
+The mean value (or expectation) and the expected variance for a random variable with a given probability mass function can be expressed generally as follows:
+
+μX = Expectation for X = ∑ xi × Pr (X=xi) for all x from xi to xk
+
+σ2X = Variance of X = ∑ (xi−μX)2 × Pr (X=xi) for all x from xi to xk
+
+Applying these formulae to die rolls, we could calculate the expectation for X for a large set of die rolls…
+
+(1 * 1/6) + (2 * 1/6) + … + (6 * 1/6) = 3.5
+
+```{r expected mean}
+m <- sum(seq(1:6) * 1/6) #this is the basic algebraic mean of the integers 1 through 6 which should represent any (large) number of dice rolls
+m
+```
+
+And the expected variance…
+
+[(1 - 3.5)^2 * (1/6)] + [(2 - 3.5)^2 * (1/6)] + … + [(6 - 3.5)^2 * (1/6)] =
+
+```{r expected variance}
+var <- sum((seq(1:6) - mean(seq(1:6)))^2 * (1/6)) #this is the basic variance calculation if the data were just the integers 1 through 6
+var
+```
+
+Likewise, we can calculate the expectation and variance for a random varible X
+ with a given probability density function generally as follows:
+ μX = Expectation for X = ∫+∞−∞ x f(x) dx
+
+σ2X = Variance of X = ∫+∞−∞ (x−μX)2 f(x) dx
+
+To demonstrate these numerically would require a bit of calculus, i.e., integration.
+
+## Useful Probability Distributions for Random Variables
+
+### Probability Mass Functions
+
+The Bernoulli Distribution is the probability distribution of a *binary* random variable, i.e., a variable that has only two possible outcomes, such as *success or failure*, *heads or tails*, *true or false*. If p is the probability of one outcome, then 1−p has to be the probabilty of the alternative. For flipping a fair coin, for example, p = 0.5 and 1−p also = 0.5.
+
+For the BERNOULLI DISTRIBUTION, the probability mass function is:
+
+f(x) = px(1−p)1−x where x = {0 or 1}
+
+For this distribution, μX = p and σ2X = p(1−p)
+
+### Challenge 3
+
+Using the Bernoulli distribution, calculate the expectation for drawing a spade from a deck of cards? What is the variance in this expectation across a large number of draws?
+
+```{r challenge 3 part 1}
+PrSpade <- (suit/deck)^1 * ((deck-suit)/deck)^0
+PrSpade
+```
+* Pr (spade) = (13/52)1 × (39/52)0 = 0.25
+
+```{r challenge 3 part 2}
+VarSpade <- (suit/deck) * (1 - (suit/deck))
+VarSpade
+```
+* Var (spade) = (13/52) × (1−13/52) = (0.25) × (0.75) = 0.1875
+
+The Bernoulli distribution is a special case of the **Binomial Distribution**. The binomial distribution is typically used to model the probability of a number of “successes” k out of a set of “trials” n, i.e., for *counts* of a particular outcome.
+
+Again, the probability of success on each trial = p and the probability of not success = 1−p.
+
+For the BINOMIAL DISTRIBUTION, the probability mass function is:
+
+  f(x) = (nk) p^k (1-p)^(n-k)
+
+where x = {0, 1, 2, … , n} and where
+
+  (nk) = n! / (k!(n-k)!)
+  
+This is read as “n choose k”, i.e., the probability of k successes out of n trials. This is also called the “binomial coefficient”.
+
+For this distribution, μX = np and σ2X = np(1-p). Recall, μX = expected number of successes in n trials
+
+Where n = 1, this simplifies to the Bernoulli distribution.
+
+### Challenge 4
+
+What is the chance of getting a “1” on each of six consecutive rolls of a die?
+
+```{r challenge 4 part 1}
+n <- 6  # number of trials
+k <- 6  # number of successes
+p <- 1/6 #probability of each success
+prob <- (factorial(n)/(factorial(k) * factorial(n - k))) * (p^k) * (1 - p)^(n - k)
+prob
+```
+What about of getting exactly three “1”s?
+```{r challenge 4 part 2}
+k <- 3  # number of successes; n and p same as last time
+prob <- (factorial(n)/(factorial(k) * factorial(n - k))) * (p^k) * (1 - p)^(n - k)
+prob
+```
+or 
+
+```{r challenge 4 part 2b}
+dbinom(x = k, size = n, prob = p) #there is a binomial distribution function built into R
+```
+
+What is the expected number of “1”s to occur in six consecutive rolls?
+
+```{r challenge 4 part 3}
+dbinom(x = 6, size = 6, prob = 1/6) #x = the number of successes
+```
+
+  * We can use the built in function pbinom() to return the value of the cumulative distribution function for the binomial distribution, i.e., the probability of observing up to and including a given number of successes in n trials.
+
+So, for example, the chances of observing exactly 0, 1, 2, 3, … 6 rolls of “1” on 6 rolls of a die are…
+
+```{r challenge 4 part 4}
+probset <- dbinom(x = 0:6, size = 6, prob = 1/6)  # x is number of successes, size is number of trials
+barplot(probset, names.arg = 0:6, space = 0, xlab = "outcome", ylab = "Pr(X = outcome)",
+    main = "Probability Mass Function")
+```
+
