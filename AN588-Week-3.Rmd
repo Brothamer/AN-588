@@ -432,12 +432,14 @@ plot(c(0, 50), c(0, 15), type = "n", xlab = "Sample size", ylab = "Variance")
 2. Create a random variable drawn from a normal distribution using the rnorm() function. Let’s use for loops to do this for samples of size 5, 10, 15… up to 50, with 50 replicates at each size. The structure for for loops is…
 
 ```{r interesting question step 2}
-for (n in seq(5, 50, 5)) # from 5 to 50 counting by 5
+for (n in seq(5, 50, 5)) # samples of 5, 10, 15... 15...
 {
-    for (i in 1:50) # for 50 replicates for (i in 1:50)
-    {x <- rnorm(n, mean = 10, sd = 2) points(n, var(x))} #calculate this
+    for (i in 1:50) # 50 replicates for (i in 1:50) # 50 replicates
+    {
+        x <- rnorm(n, mean = 10, sd = 2)
+        points(n, var(x))
+    }
 }
-
 ```
 
 Another measure of spread around a mean that we often see reported is the **standard deviation**. The standard deviation is simply the *square root of the variance*. The advantage of using the standard deviation as a statistic or parameter is that the units of standard deviation are the same as those of our original measurement (rather than being units squared, our units for variance).
