@@ -325,3 +325,53 @@ barplot(probset, names.arg = 0:6, space = 0, xlab = "outcome", ylab = "Pr(X = ou
     main = "Probability Mass Function")
 ```
 
+The **Poisson Distribution** is often used to model open ended counts of independently occuring events, for example the number of cars that pass a traffic intersection over a given interval of time or the number of times a monkey scratches itself during a given observation interval. The probability mass function for the Poisson distribution is described by a single parameter, λ, where λ can be interpreted as the mean number of occurrences of the event in the given interval.
+
+The probability mass function for the POISSON DISTRIBUTION is:
+  
+  f(x) = (λ exp(-λ))/x!
+  
+where x = {0, 1, 2, …}
+
+For this distribution, μX = λ and σ2X = λ
+
+Note that the mean and the variance are the same!
+
+Let’s use R to look at the probability mass functions for different values of λ:
+```{r Poisson distribution 1}
+x <- 0:10
+l = 3.5
+probset <- dpois(x = x, lambda = l)
+barplot(probset, names.arg = x, space = 0, xlab = "x", ylab = "Pr(X = x)", main = "Probability Mass Function")
+```
+```{r Poisson distribution 2}
+x <- 0:20
+l = 10
+probset <- dpois(x = x, lambda = l)
+barplot(probset, names.arg = x, space = 0, xlab = "x", ylab = "Pr(X = x)", main = "Probability Mass Function")
+```
+
+As we did for other distributions, we can also use the built in probability function for the Poisson distribution, ppois(), to return the value of the **cumulative distribution function**, i.e., the probability of observing up to and including a specific number of events in the given interval.
+
+```{r Poisson distribution 3}
+x <- 0:10
+l <- 3.5
+barplot(ppois(q = x, lambda = l), ylim = 0:1, space = 0, names.arg = x, xlab = "x",
+    ylab = "Pr(X ≤ x)", main = "Cumulative Probability")
+```
+
+### Probability Density Functions
+
+The **Uniform Distribution** is the simplest probability density function describing a continuous random variable. The probability is uniform and does not fluctuate across the range of x values in a given interval.
+
+The probability density function for the UNIFORM DISTRIBUTION is:
+
+  f(x) = 1/(b-a)
+  
+where a ≤ x ≤ b and 0 for x < a and x > b
+
+### Challenge 5
+What would you predict the expectation (mean) should be for a uniform distribution?
+
+For this distribution:
+
