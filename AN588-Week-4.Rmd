@@ -1,0 +1,167 @@
+---
+title: "AN5888-Week4-notes"
+author: "Brooke Rothamer"
+date: "2023-09-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Module 08: Probilities and Distributions
+
+When we do statistical inference we are basically trying to draw conclusions about a population based on measurements from a noisy sample or trying to evaluate whether it is reasonable to assume that our sample is drawn from a particular population.
+
+This process of trying to draw conclusions is complicated by the fact that…
+
+* our sample may be biased, non-random, or non-representative in some way
+* there may be unknown or unobserved variables that impact how the sample is related to the population
+* the assumptions we make about the population that our sample is drawn from might not be correct
+
+## Probability
+
+The term probability is applied to population level variables that describe the magnitude of chance associated with particular observations or event. Probabilities summarize the relative frequencies of possible outcomes. Probabilities are properties of distributions. Probabilities vary between zero and one. Outcomes that are impossible have Pr = 0, those that are certain have Pr = 1.
+
+### Example: Rolling a Die
+We will use the {manipulate} package and the sample() function to explore the effects of sample size on estimates of the probability of different outcomes. The probability of each outcome (rolling a “1”, “2”,…, “6”) is 1 in 6, but our estimate of the probability of each possible outcome will change with sample size.
+
+```{r die rolls, eval=FALSE}
+library(manipulate)
+outcomes <- c(1, 2, 3, 4, 5, 6)
+manipulate(hist(sample(outcomes, n, replace = TRUE), breaks = c(0.5, 1.5, 2.5,
+    3.5, 4.5, 5.5, 6.5), probability = TRUE, main = paste("Histogram of Outcomes of ",
+    n, " Die Rolls", sep = ""), xlab = "roll", ylab = "probability"), n = slider(0,
+    10000, initial = 100, step = 100))
+```
+Note: you must run manipulate directly in the console and manipulate the plot settings in the plots tab to change the number of rolls
+
+### Challenge 1
+
+Write a function to simulate rolling a die where you pass the number of rolls as an argument. Then, use your function to simulate rolling two dice 1000 times and take the sum of the rolls. Plot a histogram of those results.
+
+```{r Challenge 1}
+nrolls <- 1000 #just saving the number of rolls as a variable for ease
+roll <- function(x) {sample(1:6, x, replace = TRUE)} #creating a simple function that simulates rolling a 6-sided die
+two_dice <- roll(nrolls) + roll(nrolls) #combining functions to simulate rolling two dice 1000 (nrolls) times and summing the outcomes each time
+hist(two_dice, breaks = c(1.5:12.5), probability = TRUE, main = "Rolling Two Dice", xlab = "sum of rolls", ylab = "probability") #creating a histogram of the outcomes
+```
+
+Note: this histogram will look a little different every time the code is run because it depends on probability, but it should look similar overall.
+
+### Rules of Probability
+
+1. Pr(+) = Probablility that something occurs = 1
+2. Pr(∅) = Probability that nothing occurs = 0
+3. Pr(A) = Probability that a particular event A occurs
+  + 0 ≤ Pr(A) ≤ 1
+4.Pr (A ⋃ B) = Probability that a particular event A ***or*** a particular event B occurs = UNION.
+  + If events A and B are mutually exclusive, then this is equal to Pr(A) + Pr(B)
+5. Pr (A ⋂ B) = Probability that a particular event A ***and*** a particular event B occur = INTERSECTION
+  + Pr(A ⋂ B) = Pr(A | B) × Pr(B) = Pr(B | A) × Pr(A)
+  + If the events are independent, then this is equal to Pr(A) × Pr(B)
+  + If Pr (A ⋂ B) = 0, then the events are mutually exclusive
+6. Pr( = Probability of the completement of A = 1 - Pr(A)
+7. Conditional Probability is the probability of an event occuring after taking into accoun the occurence of another event
+  + For example, the probability of a die coming up as a “1” given that we know the die came up as an odd number (“1”, “3”, or “5”).
+  + Pr(A | B) = Pr(A ⋂ B) ÷ Pr(B)
+  + If events A and B are independent, then Pr(A | B) = [Pr(A) ×
+  Pr(B)] ÷ Pr(B) = Pr(A)
+  + If events A and B are dependent, then Pr(A | B) ≠ Pr (A)
+  
+### Challenge 2
+
+You have a deck of 52 cards, Ace to 10 + 3 face cards in each suit. You draw a card at random.
+
+```{r Challenge 2}
+deck <- 52
+face <- 3*4
+king <- 4
+suit <- 13
+red <- 2 * suit
+```
+
+* What is the probability that you draw a face card?
+
+```{r Challenge 2 part 2}
+faceprob <- face/deck
+faceprob
+```
+* What is the probability that you draw a King?
+```{r Challenge 2 part 3}
+kingprob <- king/deck
+kingprob
+```
+* What is the probability that you draw a spade?
+```{r Challenge 2 part 4}
+suitprob <- suit/deck
+suitprob
+```
+* What is the probability that you draw a spade given that you draw a face card?
+  + Conditional Probability; independent
+```{r Challenge 2 part 5}
+spadefaceprob <- suit/deck
+spadefaceprob
+```
+* What is the probability that you draw a King given that you draw a face card?
+  + Conditional Probability; dependent
+```{r Challenge 2 part 6}
+kingfaceprob <- king/face
+kingfaceprob
+```
+* What is the probability that you draw a card that is both from a red suit (hearts or diamonds) and a face card?
+  + Intersection
+```{r Challenge 2 part 7}
+faceredprob <- (red/deck) * (face/deck)
+faceredprob
+```
+
+## Random Variables
+
+A **random variable** is a variable whose outcomes are assumed to arise by chance or according to some random or stochastic mechanism. The chances of observing a specific outcome or an outcome value within a specific interval has associated with it a **probability**.
+
+1. **Discrete Random Variables** are random variables that can assume only a countable number of discrete possibilities (e.g., counts of outcomes in a particular category). We can assign a probability to each possible outcome.
+
+2. **Continuous Random Variables** are random variables that can assume any real number value within a given range (e.g., measurements). We cannot assign a specific probability to each possible outcome value as the set of possible outcomes is infinite, but we can assign probabilites to intervals of outcome values.
+
+A **probability function** is a mathematical function that describes the chance associated with a random variable having a particular outcome or falling within a given range of outcome values.
+
+1. **Probability Mass Functions (PMFs)** are associated with *discrete* random variables. These functions describe the probability that a random variable takes a particular discrete value.
+
+Example: Flipping a coin
+```{r Random variables 1}
+outcomes <- c("heads", "tails") #assigns outcomes as characters
+prob <- c(1/2, 1/2) #assigns probability of each outcome
+barplot(prob, ylim = c(0, 0.6), names.arg = outcomes, space = 0.1, xlab = "outcome", ylab = "Pr(X = outcome)", main = "Probability Mass Function") #makea plot of an example of what probability mass functions produce
+```
+
+2. **Probability Density Functions (PDFs)** are associated with *continuous* random variables. These functions describe the probability that a random variable falls within a given range of outcome values. The probability associated with that range equals the area under the density function for that range.
+
+  * f(x) ≥ 0 for all −∞ ≤ x ≤ +∞
+  * The total area under f(x) = 1
+
+Example: Beta distribution
+
+* The **Beta Distribution** refers to a family of continuous probability distributions defined over the interval [0, 1] and parametrized by two positive shape parameters, denoted by α and β, that appear as exponents of the random variable x and control the shape of the distribution.
+
+f(x) = Kxα−1(1−x)β−1
+
+If we set K = 2, α = 2, and β = 1 and restrict the domain of x to [0, 1], it gives us a triangular function that we can graph as follows:
+
+```{r Random Variables 2}
+library(ggplot2)
+a <- 2
+b <- 1
+K <- 2
+x <- seq(from = 0, to = 1, by = 0.025)
+fx <- K * x^(a - 1) * (1 - x)^(b - 1)
+lower_x <- seq(from = -0.25, to = 0, by = 0.025)  # add some values of x less than zero
+upper_x <- seq(from = 1, to = 1.25, by = 0.025)  # add some values of x greater than one
+lower_fx <- rep(0, 11)  # add fx=0 values to x<0
+upper_fx <- rep(0, 11)  # add fx=0 values to x>1
+x <- c(lower_x, x, upper_x)  # paste xs together
+fx <- c(lower_fx, fx, upper_fx)  # paste fxs together
+d <- as.data.frame(cbind(x, fx))
+p <- ggplot(data = d, aes(x = x, y = fx)) + xlab("x") + ylab("f(x)") + geom_line()
+p
+```
