@@ -30,17 +30,17 @@ In Module 7, we calculated confidence intervals for one of our estimates of a po
 n <- 1000
 mu <- 3.5
 sigma <- 4
-v <- rnorm(n, mu, sigma)
+v <- rnorm(n, mu, sigma) #random sample
 s <- sample(v, size = 30, replace = FALSE)
 m <- mean(s)
-m
+m #close to the population mean but not quite
 ```
 ``` {r mod 8 recap 2}
 sd <- sd(s)
 sd
 ```
 ``` {r mod 8 recap 3}
-sem <- sd(s)/sqrt(length(s))
+sem <- sd(s)/sqrt(length(s)) #standard error of the mean
 sem
 ```
 ``` {r mod 8 recap 4}
@@ -165,12 +165,11 @@ Recall from our discussion of discrete random binary variables that the expectat
 
 The expected sampling distribution for the proportion of successes is approximately normal centered at π and its standard deviation is estimated by sqrt(π(1−π)/n), which is, essentially, the standard error of the mean: it is the square root of (the expected variance / sample size). As above for μ, if we do not already have a population estimate for π, we can estimate this from a sample as p = x/n
 
-Note: this expectation based on an approximation of the normal holds true only if both n×π and n×(1−π)
- are greater than roughly 5, so we should check this when working with proportion data.
+Note: this expectation based on an approximation of the normal holds true only if both n×π and n×(1−π) are greater than roughly 5, so we should check this when working with proportion data.
 
 ### Challenge
 
-Suppose a polling group in the Massachusetts is interested in the proportion of voting-age citizens in their state that already know they will vote for Elizabeth Warren in the upcoming November 5, 2024 general elections. The group obtains a yes or no answer from 1000 suitable randomly selected individuals. Of these individuals, 856 say they know they’ll vote for Senator Warren. 
+Suppose a polling group in Massachusetts is interested in the proportion of voting-age citizens in their state that already know they will vote for Elizabeth Warren in the upcoming November 5, 2024 general elections. The group obtains a yes or no answer from 1000 suitable randomly selected individuals. Of these individuals, 856 say they know they’ll vote for Senator Warren. 
 
 How would we characterize the mean and variability associated with this proportion?
 ``` {r Mod 9 challenge 1}
@@ -181,10 +180,10 @@ phat
 ```
 Are n×π and n×(1−π) both > 5? Yes!
 ``` {r mod 9 challenge 2}
-n * phat
+n * phat #greater than 5?
 ```
 ``` {r mod 9 challenge 3}
-n * (1 - phat)
+n * (1 - phat) #greater than 5?
 ```
 ``` {r mod 9 challenge 4}
 pop_se <- sqrt((phat) * (1 - phat)/n)
@@ -212,6 +211,7 @@ Thus far, we have discussed creating a confidence interval based on the CLT and 
 * *mean ± Z* (the quantile from the standard normal curve) × standard error of the mean
 
 But, when the size of our sample is small (n < 30), instead of using the normal distribution to calculate our CIs, statisticians typically use a different distribution to generate the relevant quantiles to multiply the standard error by: the t distribution (a.k.a., Gosset’s t or Student’s t distribution).
+* fat tails
 
 Note that this is the typical case that we will encounter, as **we often do not have information about the population that a sample is drawn from**.
 
@@ -345,10 +345,11 @@ HA ≠ H0, which constitutes an "two-tailed test (i.e., our sample statistic is 
 
 There are then four possible outcomes to our statistical decision:
 
-Ho -> Ho -> Correctly accept the null
-Ho -> HA -> Falsely reject the null (Type 1 error)
-HA -> Ho -> Falsely accept the null (Type 2 error)
-HA -> HA -> Correctly reject the null
+**True    Think     What Happened**
+Ho ->   Ho ->     Correctly accept the null
+Ho ->   HA ->     Falsely reject the null (Type 1 error)
+HA ->   Ho ->     Falsely accept the null (Type 2 error)
+HA ->   HA ->     Correctly reject the null
 
 In classical frequentist (a.k.a. parametric) inference, we perform hypothesis testing by trying to minimize our probability of Type I error… we aim for having a high bar for falsely rejecting the null (e.g., for incorrectly finding an innocent person guilty). When we set a high bar for falsely rejecting the null, we lower the bar for falsely ‘accepting’ (failing to reject) the null (e.g., for concluding that a guilty person is innocent).
 
@@ -362,9 +363,9 @@ We compare the p value associated with our test statistic to some significance l
 
 How do we calculate the p value?
 
-* Specify a test statistic (e.g., the mean)
-* Specify our null distribution
-* Calculate the tail probability, i.e., the probability of obtaining a statistic (e.g., a mean) as or more extreme than was observed assuming that null distribution
+1. Specify a test statistic (e.g., the mean)
+2. Specify our null distribution
+3 Calculate the tail probability, i.e., the probability of obtaining a statistic (e.g., a mean) as or more extreme than was observed assuming that null distribution
 
 ## Testing Sample Means: One Sample Z and T Tests
 
@@ -386,8 +387,8 @@ head(d)
 mean(d$weight) #the test statistic
 ```
 
-* What is our H0? The mean weight of vervets trapped in 2016 is not greater than the mean of those trapped in earlier years.
-* What is our HA? The mean weight of vervets trapped in 2016 is greater then the mean of those trapped in earlier years.
+* What is our H0? The mean weight of vervets trapped in 2016 is not greater than the mean of those trapped in earlier years (4.9).
+* What is our HA? The mean weight of vervets trapped in 2016 is greater then the mean of those trapped in earlier years (4.9).
 * What is the hypothesis we want to test? Ho
 * Is it two-tailed? Upper-tailed? Lower-tailed? upper one-tailed test
 * Calculate the mean, standard deviation, and SEM from our sample
@@ -432,14 +433,10 @@ We want the probability of seeing a z this large or larger by chance.
 p <- 1 - pnorm(z)
 p
 ```
-
+Or
 ```{r z test 7}
 p <- pnorm(z, lower.tail = FALSE)
 p
-```
-```{r z test 8}
-z <- (m - mu)/sem
-z
 ```
 
 However, as noted above, our sample size from a population is typically limited. So, instead of using the normal distribution to determine the p value of our statistic, we should use the t distribution, which, as we’ve seen, has slightly fatter tails. The statistic and process is exactly the same, though, as for the normal distribution.
@@ -582,3 +579,259 @@ test <- t < -crit || t > crit  # boolean test
 test <- abs(t) > crit
 test
 ```
+
+```{r challenge 2 part 7}
+df <- (s2^2/n2 + s1^2/n1)^2/((s2^2/n2)^2/(n2 - 1) + (s1^2/n1)^2/(n1 - 1)) #calculate degrees of freedom
+df
+```
+
+Do the same using the t.test() function.
+```{r challenge 2 part 8}
+t <- t.test(x = x, y = y, mu = 0, alternative = "two.sided")
+t
+```
+How do we interpret these results?
+* The p value is less than .05, so we reject the null hypothesis. The sample means are not the same. (The difference is not 0).
+
+### Samples with Equal Variances
+
+There’s a simpler t statistic we can use if the variances of the two samples are more or less equal.
+
+* T = (sample mean 2 - sample mean 1 - pop mean) / (sqrt(stdevpop^2(1/n1 + 1/n2)))
+
+where
+
+* stdevpop = ((n-1)s1^2 + (n2-1_s2^2))/(n1 + n2 - 2)
+
+Also
+
+* df = n1 + n2 - 2
+
+```{r equal variance 1}
+s <- sqrt((((n1 - 1) * s1^2) + ((n2 - 1) * s2^2))/(n1 + n2 - 2))
+t <- (m2 - m1 - mu)/(sqrt(s^2 * (1/n1 + 1/n2)))
+t
+```
+
+```{r equal variance 2}
+df <- n1 + n2 - 2
+df
+```
+
+
+```{r equal variance 3}
+t <- t.test(x = x, y = y, mu = 0, var.equal = TRUE, alternative = "two.sided")
+t
+```
+
+A crude test for equality of variances is to divide the larger by the smaller and if the result is < 2, you can go ahead and used the pooled variance version of the test (which has many fewer degrees of freedom).
+
+In our case, we cannot, since the ratio of variances exceeds 2:
+
+```{r equal variance 4}
+var(x)/var(y)
+```
+
+We can use the var.test() function to conduct an actual statistical test on the ratio of variances, which compares the ratio test statistic we just calculated to an F distribution. The **F distribution** is often used to model ratios of random variables and thus is useful in regression applications and, as here, for testing whether variances from two samples are different. It is dependent upon the specification of a pair of degrees of freedom values supplied as the arguments df1= and df2= (or inferred from the number of observations in each sample).
+
+Below, the results of var.test() are saved to a variable. Calling the variable provides a brief descriptive summary.
+
+```{r equal variance 5}
+vt <- var.test(x, y)
+vt
+```
+
+### Paired Samples
+
+For a paired sample test, the null hypothesis is that the mean of individual paired differences between the two samples (e.g., before and after) is zero.
+
+Our test statistic is:
+
+* T = (d - μ) / sqrt(sd^2/n)
+
+Where
+
+* d = mean of difference between paired samples
+* μ = expected mean difference between paired samples (usually set to zero)
+* sd = standard deviation in the set of differences between paired samples
+* n = number of sample pairs
+
+Again, note that μ here is the expected difference between the means under the null hypothesis, which is zero, and we are dividing by the standard error of the mean for the set of differences between pairs.
+ 
+ ### Challenge 3
+ 
+ Let’s play with a sample… IQs of individuals taking a certain statistics course before and after a lecture on significance testing. Load in the iqs.csv data file, look at it, plot a barchart of values before and after and construct a paired t test to evaluate the means before and after.
+ 
+```{r Challenge 3 part 1}
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/iqs.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(d)
+```
+
+```{r Challenge 3 part 2}
+x <- d$IQ.before - d$IQ.after
+m <- mean(x)
+mu <- 0  # can leave this out
+s <- sd(x)
+n <- length(x)
+sem <- s/sqrt(n)
+par(mfrow = c(1, 2))
+boxplot(d$IQ.before, ylim = c(115, 145), main = "IQ", xlab = "Before")
+boxplot(d$IQ.after, ylim = c(115, 145), main = "IQ", xlab = "After")
+```
+
+```{r Challenge 3 part 3}
+t <- (m - mu)/sem
+t
+```
+
+```{r Challenge 3 part 4}
+alpha <- 0.05
+crit <- qt(1 - alpha/2, df = n - 1)  # identify critical values
+crit
+```
+
+```{r Challenge 3 part 5}
+test <- t < -crit || t > crit  # boolean test
+test
+```
+```{r Challenge 3 part 6}
+t.test(x, df = n - 1, alternative = "two.sided")
+```
+
+How do we interpret these results?
+* No significant change (also IQ is BS)
+
+## Testing Sample Proportions: One Sample Z Test
+
+As we have seen, the sampling distribution of sample means for independent and identically distributed random variables is roughly normal (and, as shown by the CLT, this distribution increasingly approaches normal as sample size increases). Similarly, the sampling distribution for another kind of sample statistic, the number of “successes” x out of a series of k trials is also roughly normally distributed. If the true population proportion of “successes” is π, then the sampling distribution for the proportion of successes in a sample of size n is expected to be roughly normally distributed with mean = π and standard error = sqrt(π(1−π)/n).
+
+Let’s set up a simulation to show this…
+
+First we create a population of 500 “1”s and 500 “0”s, i.e., where π = 0.5:
+
+```{r proportion z test 1}
+pop <- c(rep(0, 500), rep(1, 500))
+```
+
+```{r proportion z test 2}
+pi <- 0.5
+x <- NULL
+n <- 10
+for (i in 1:1000) {
+    x[i] <- mean(sample(pop, size = n, replace = FALSE))  # taking the mean of a bunch of 0s and 1s yields the proportion of 1s!
+}
+m <- mean(x)
+m
+```
+
+```{r proportion z test 3}
+s <- sd(x)
+s
+```
+
+```{r proportion z test 4}
+pop_se <- sqrt(pi * (1 - pi)/n)
+pop_se  # the se is an estimate of the sd of the sampling distribution
+```
+
+The same is true if we create a population of 800 “1”s and 200 “0”s, i.e., where π
+ = 0.8:
+ 
+```{r proportion z test 5}
+pop <- c(rep(0, 800), rep(1, 200))
+pi <- 0.8
+x <- NULL
+n <- 10
+for (i in 1:1000) {
+    x[i] <- mean(sample(pop, size = n, replace = FALSE))  # taking the mean of a bunch of 0s and 1s yields the proportion of 1s!
+}
+m <- mean(x)
+m
+```
+
+```{r proportion z test 6}
+s <- sd(x)
+s
+```
+
+```{r proportion z test 7}
+pop_se <- sqrt(pi * (1 - pi)/n)
+pop_se  # the se is an estimate of the sd of the sampling distribution
+```
+
+This normal approximation is true as long as n is fairly large and π is not close to 0 or 1. One rule of thumb is to check that both n×π and n×(1−π) are greater than 5.
+
+With all this in mind, we can construct Z statistics for proportions like we constructed Z and T statistics for means and test those proportions for differences from an expected value or for differences between two sample proportions. The Z statistic for proportions takes the same general form as that for means:
+
+* z = (observed statistic - expected statistic) / standard error
+
+or,
+
+* Z = (phat - π)/sqrt(π(1-π)/n)
+
+where
+
+* phat = proportion in sample
+π = expected proportion
+n = number of observations in sample
+
+### Challenge 4
+
+A neotropical ornithologist working in the western Amazon deploys 30 mist nets in a 100 hectare (ha) grid. She monitors the nets on one morning and records whether or not she captures any birds in the net (i.e., a “success” or “failure” for every net during a netting session). The following vector summarizes her netting results:
+
+```{r challenge 4 part 1}
+v <- c(0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 0,  1, 1, 0, 1, 0, 1, 1)
+```
+
+Her netting success over the previous three seasons suggests that she should catch birds in 80% of her nets. This season, she feels, her success rate is lower than in previous years. Does her trapping data support this hypothesis?
+
+* What is H0? The success rate is 80% of the nets catching birds. 
+* What is HA? 
+* Are both n×π and n×(1−π) > 5? yes
+* Calculate z and the p value associated with z
+* Calculate the 95% CI around phat
+
+```{r challenge 4 part 2}
+phat <- mean(v)
+phat
+```
+
+```{r challenge 4 part 3}
+pi <- 0.8
+n <- 30
+z <- (phat - pi)/sqrt(pi * (1 - pi)/30)
+z
+```
+
+```{r challenge 4 part 4}
+p <- pnorm(z, lower.tail = TRUE)
+p
+```
+
+We use the lower.tail=TRUE argument because we’re testing a lower-tailed one-tailed hypothesis. The 95% confidence interval can be estimated, based on the normal distribution, as follows:
+
+```{r challenge 4 part 5}
+lower <- phat - qnorm(0.975) * sqrt(phat * (1 - phat)/30)
+upper <- phat + qnorm(0.975) * sqrt(phat * (1 - phat)/30)
+ci <- c(lower, upper)
+ci
+```
+
+This approach using quantiles of the standard normal distribution is but one method of calculating CIs for proportion data, and is the CI referred to as a Wald confidence interval. Note that the CI does not include the value of π
+… rather, π
+ > is greater than the upper bound of the CI, suggesting that the observed success rate is indeed lower than in previous years.
+
+We can do the same test with a one-liner in R:
+
+```{r challenge 4 part 6}
+pt <- prop.test(x = sum(v), n = length(v), p = 0.8, conf.level = 0.95, correct = FALSE,
+    alternative = "less")
+pt
+```
+Note that the CI is different than we calculated based on the normal distribution… prop.test() implements a slightly different procedure for estimating the CI rather than basing this on the normal distribution and the CLT.
+
+How should she interpret these results? Was she right that her trapping results are off this year?
+* Yes, her catch rate was significantly lower that year
+
+## Comparing Sample Proportions: Two Sample Z Tests
