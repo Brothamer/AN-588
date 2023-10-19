@@ -240,3 +240,134 @@ Some other popular tests for normality, and the cases in which they’re best us
 For a good discussion/demonstration of the relative power of each of these tests (meaning the probability that the test will correctly reject the null hypothesis) at different sample sizes, check this out, especially the tables on 670-8 and 670-9, and plots on 670-10. This can help you better understand which test is best for a given sample size, and how much faith to put in these tests given your sample!
 
 ### Challenge 2
+
+Load in the “KamilarAndCooper.csv” dataset and develop a linear model to look at the relationship between “weaning age” and “female body mass”. You will probably need to look at the data and variable names again to find the appropriate variables to examine.
+
+* Using the procedures outlined above and in Module 12, calculate estimates of β0 and β1 by hand *and using the lm() function. Are the regression coefficients estimated under a simple linear model statistically significantly different from zero?
+* Construct an ANOVA table by hand and compare your values to the results of running lm() and then looking at summary.aov(lm()).
+* Generate the residuals for your linear model by hand, plot them in relation to female body weight, and make a histogram of the residuals. Do they appear to be normally distributed?
+* Run the plot() command on the result of lm() and examine the 4 plots produced. Again, based on examination of the residuals and the results of Shapiro-Wilks test, does it look like your model has good fit?
+
+```{r Challenge 2 p1}
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall23/KamilarAndCooperData.csv")
+d <- read.csv(f, header = TRUE, sep = ",", stringsAsFactors = FALSE)
+head(d)
+
+plot(data = d, WeaningAge_d ~ Body_mass_female_mean)
+```
+
+```{r Challenge 2 p2}
+model <- lm(data = d, WeaningAge_d ~ Body_mass_female_mean)
+summary(model)
+
+plot(model)
+```
+
+```{r Challenge 2 p3}
+qqPlot(model$residuals)
+```
+
+```{r Challenge 2 p4}
+s <- shapiro.test(model$residuals)
+s
+```
+
+## Data Transformations
+Recall that for linear regression modeling to be appropriate, two important conditions need to be met: [1] our variables (and the error variance in our variables) should be **normally distributed** and [2] there should be **homogeneity of variance** in our response variable around the range of our predictor variable.
+
+In many cases, these conditions may not be met… for example, the continuous metric data we have may not, in fact, be normally distributed. Which data points are pushing this dataset into non-normality? Can we justify their exclusion to achieve normality if we’re interested in understanding life history variation in the realtionship between female body size and age at weaning? Thankfully, we can often apply some kind of mathematical transformation to our data to change their distribution to more closely approximate the normal without excluding what may initially appear to be outliers.
+
+The logarithmic or “log” transformation (where we take the log value of each data point) is often applied to positive numeric variables with heavy skew to dramatically reduce the overall range of the data and bring extreme observations closer to a measure of centrality. The logarithm for a number is the power to which you must raise a base value (e.g., e, the natural log) in order to obtain that number. This is an example of a “power transformation”, other examples of which include the square root transformation and the reciprocal (or multiplicative inverse) transformation.
+
+
+### Challenge 3
+
+Return to the “KamilarAndCooper.csv” dataset you were looking at above and log transform both of your variables and then run a simple bivariate linear model. Do you notice a difference between these results and those obtained using untransformed variables?
+
+```{r Challenge 3 p1}
+d$logWeaningAge <- log(d$WeaningAge_d)
+d$logFemaleBodyMass <- log(d$Body_mass_female_mean)
+plot(data = d, logWeaningAge ~ logFemaleBodyMass)
+```
+
+
+```{r Challenge 3 p2}
+model <- lm(data = d, logWeaningAge ~ logFemaleBodyMass)
+summary(model)
+plot(model)
+```
+
+```{r Challenge 3 p3}
+qqPlot(model$residuals)
+```
+
+```{r Challenge 3 p4}
+s <- shapiro.test(model$residuals)
+s
+```
+
+Other common numerical transformations that are often useful for changing a variable’s distribution to more closely approximate the normal.
+
+* logX y = a + b ln(x)
+* LogY y = exp(a + bx)
+* asymptotic y = ax / (a + bx)
+* reciprocal y = a + b/x
+* power law y = a x^b
+* exponential y = a e^(bx)
+
+```{r log x}
+par(mfrow = c(1, 2))
+
+a <- 2
+b <- 2
+
+# log x
+x <- seq(from = 0, to = 100, length.out = 1000)
+y <- a + b * log(x)
+plot(x, y, type = "l", main = "untransformed")
+plot(log(x), y, type = "l", main = "log(x)")
+```
+
+```{r log y}
+# log y
+x <- seq(from = 0, to = 10, length.out = 1000)
+y <- exp(a + b * x)
+plot(x, y, type = "l", main = "untransformed")
+plot(x, log(y), type = "l", main = "log(y)")
+```
+
+```{r assymptotic}
+# assymptotic
+x <- seq(from = 1, to = 100, length.out = 100)
+y <- (a * x)/(1 + b * x)
+plot(x, y, type = "l", main = "untransformed")
+plot(1/x, y, type = "l", main = "1/x")
+```
+
+```{r reciprocal}
+# reciprocal
+x <- seq(from = 1, to = 100, length.out = 100)
+y <- a + b/x
+plot(x, y, type = "l", main = "untransformed")
+plot(1/x, y, type = "l", main = "1/x")
+```
+
+```{r power}
+# power
+x <- seq(from = 1, to = 100, length.out = 100)
+y <- a * x^b
+plot(x, y, type = "l", main = "untransformed")
+plot(x^b, y, type = "l", main = "x^b")
+```
+
+```{r exponential}
+# exp
+x <- seq(from = 1, to = 10, length.out = 100)
+y <- a * exp(b * x)
+plot(x, y, type = "l", main = "untransformed")
+plot(x, log(y), type = "l", main = "log(y)")
+```
+
+Uniformly transforming a dataset is the most common way of attempting to squeeze your data into matching the normal distribution so that you can use parametric statistics. This is a very common practice, and there is much written on the topic, including its drawbacks.
+
+For a good discussion on common transformations, see R in Action Chapter 8.5 (Corrective measures), and please do note A caution concerning transformations (p. 200). When trying out transformations, keep your normalization tests handy so that you can retest the transformed data and see if the transformation achieved it’s intended purpose.
