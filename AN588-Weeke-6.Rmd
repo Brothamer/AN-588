@@ -515,8 +515,7 @@ Or
 cor(w, h, method = "pearson")
 ```
 
-This formulation of the correlation coefficient is referred to as Pearson’s product-moment correlation coefficient and is often abbreviated as ρ
-.
+This formulation of the correlation coefficient is referred to as Pearson’s product-moment correlation coefficient and is often abbreviated as ρ.
 
 There are other, nonparametric forms of the correlation coefficient we might also calculate, in the case that our data do not follow the assumptions of a normal distribution. Spearman’s rank-order correlation coefficient (r) is the most common, and roughly approximate’s Pearson’s ρ, but there are others (like Kendall’s τ, which is also fairly common)
 
@@ -606,10 +605,10 @@ Similarly, analytically…
 ```{r beta1}
 beta1 <- cor(w, h) * (sd(h)/sd(w))
 beta1
-
+#Or
 beta1 <- cov(w, h)/var(w)
 beta1
-
+#Or
 beta1 <- sum((h - mean(h)) * (w - mean(w)))/sum((w - mean(w))^2)
 beta1
 ```
@@ -628,7 +627,7 @@ beta0 <- mean(h) - beta1 * mean(w)
 beta0
 ```
 
-Note that in the example above, we have taken our least squares criterion to mean minimizing the deviation of each of our Y variables from a line of best fit in a dimension perpendicular to the Y axis. In general, this kind of regression, where deviation is measured perpendicular to one of the axes, is known as Model I regression, and is used when the levels of the predictor variable are either measured without error (or, practically speaking, are measured with much less uncertainty than those of the response variable) or are set by the researcher (e.g., for defined treatment variables in an ecological experiment).
+Note that in the example above, we have taken our least squares criterion to mean minimizing the deviation of each of our Y variables from a line of best fit in a dimension perpendicular to the Y axis. In general, this kind of regression, where deviation is measured perpendicular to one of the axes, is known as **Model I regression**, and is used when the levels of the predictor variable are either measured without error (or, practically speaking, are measured with much less uncertainty than those of the response variable) or are set by the researcher (e.g., for defined treatment variables in an ecological experiment). [Ordinary Least Squares (OLS)]
 
 ### The lm() Function
 
@@ -665,10 +664,10 @@ mII <- lmodel2(height ~ weight, data = d, range.y = "relative", range.x = "relat
     nperm = 1000)
 mII
 
-plot(mII, "OLS")
-plot(mII, "RMA")
-plot(mII, "SMA")
-plot(mII, "MA")
+plot(mII, "OLS") #ordinary least squares (model I)
+plot(mII, "RMA") #reduced major axis regression
+plot(mII, "SMA") #standardized major axis regression
+plot(mII, "MA") #major axis regression
 ```
 Note that, here, running lmodel2() and using OLS to detemine the best coefficients yields equivalent results to our Model I regression done above using lm().
 
@@ -703,7 +702,7 @@ m
 ```
 
 ## Statistical Inference Regression
-Once we have our linear model and associated regression coefficients, we want to know a bit more about it. First, we want to be able to evaluate whether there is statistical evidence that there is indeed a relationship between these variables. If so, then our regression coefficients can indeed allow us to estimate or predict the value of one variable given another. Additionally, we also would like to be able to extend our estimates from our sample out to the population they are drawn from. These next steps involve the process of statistical inference.
+Once we have our linear model and associated regression coefficients, we want to know a bit more about it. First, we want to be able to evaluate whether there is **statistical evidence** that there is indeed a relationship between these variables. If so, then our regression coefficients can indeed allow us to estimate or predict the value of one variable given another. Additionally, we also would like to be able to extend our estimates from our sample out to the population they are drawn from. These next steps involve the process of statistical inference.
 
 The output of the lm() function provides a lot of information useful for inference. Run the command summary() on the output of lm(data=d,height~weight)
 

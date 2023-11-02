@@ -110,7 +110,7 @@ Recall that the results returned by summary() of our regression model also shows
 rsquared <- SSR/SSY
 rsquared
 
-rho <- sqrt(rsquared)
+rho <- sqrt(rsquared) #(Pearson's)
 rho #correlation coefficient
 ```
 
@@ -194,6 +194,7 @@ plot(m$model$weight, m$residuals)
 par(mfrow = c(2, 2))
 plot(m)
 ```
+* These plots will also label outliers
 
 The first plot of fitted values () versus residuals should, like the plot of x versus residuals, not show any structure. We hope to see equally spread residuals around a horizontal line without distinct patterns. The second plot is a Q-Q plot of theoretical quantiles versus standardized quantiles for the residual values. These should fall on roughly a straight line, if the residuals are normally distributed. The third plot graphs the square root of the standardized residuals versus x and shows whether or not residuals are spread equally along the ranges of xs. It is good if you see a horizontal line with equally spread points rather than a decrease or increase in spread with x, which would indicate that the error variance increases or decreases with x. The fourth plot highlights whether there are particular observations that influence the results. In particular, we look to see if there are cases that fall in the upper or lower right portion of the plot.
 
@@ -370,4 +371,4 @@ plot(x, log(y), type = "l", main = "log(y)")
 
 Uniformly transforming a dataset is the most common way of attempting to squeeze your data into matching the normal distribution so that you can use parametric statistics. This is a very common practice, and there is much written on the topic, including its drawbacks.
 
-For a good discussion on common transformations, see R in Action Chapter 8.5 (Corrective measures), and please do note A caution concerning transformations (p. 200). When trying out transformations, keep your normalization tests handy so that you can retest the transformed data and see if the transformation achieved it’s intended purpose.
+For a good discussion on common transformations, see R in Action Chapter 8.5 (Corrective measures), and please do note A **caution concerning transformations (p. 200)**. When trying out transformations, keep your normalization tests handy so that you can retest the transformed data and see if the transformation achieved it’s intended purpose.
