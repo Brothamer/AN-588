@@ -208,7 +208,7 @@ A generalized linear model consists of three components:
 
 * The **error structure** or **random component**, which refers to the probability distribution of the response variable and of the residuals in the response variable after the linear component has been removed. The probability distribution in a GLM must be from the exponential family of probability distributions, which includes the normal (Gaussian), binomial (e.g., if our response variable is binary, like “yes/no”, “presence/absence”), Poisson (e.g., if our reponse variable consists of count data), gamma, negative binomial, etc.
 
-* A link function, which links the expected value of the response variable to the predictors. You can think of this as a transformation function. In GLM, our linear component yields a predicted value, but this value is not necessarily the predicted value of our response variable, Y, per se. Rather, the predicted value is some needs to be transformed back into a predicted Y by applying the inverse of the link function.
+* A link function, which links the expected value of the response variable to the predictors. You can think of this as a transformation function. In GLM, our linear component yields a predicted value, but this value is not necessarily the predicted value of our response variable, Y, per se. Rather, the predicted value is something that needs to be transformed back into a predicted Y by applying the inverse of the link function.
 
 Common link functions include:
 
@@ -493,15 +493,15 @@ Here’s some additional useful information about intepreting the results of sum
 
 Let n = the number of observations in the data set and k = the number of predictor terms in a proposed model.
 
-The Saturated Model is a model that assumes each data point has its own parameter, which means we have n parameters to describe the data
+* The Saturated Model is a model that assumes each data point has its own parameter, which means we have n parameters to describe the data
 
-The Null Model is a model that assumes the exact “opposite”, i.e., one parameter describes all of the data points, which means only one parameter, the intercept, is estimated from the data
+* The Null Model is a model that assumes the exact “opposite”, i.e., one parameter describes all of the data points, which means only one parameter, the intercept, is estimated from the data
 
-The Proposed Model is the model we are fitting by GLM, which has k predictor terms (1 for the intercept + 1 for each predictor variable/interaction term)
+* The Proposed Model is the model we are fitting by GLM, which has k predictor terms (1 for the intercept + 1 for each predictor variable/interaction term)
 
-Null Deviance = deviance of null model, calculated as 2(log-likelihood of the saturated model - log-likelihood of a null model), where df = n - 1
+* Null Deviance = deviance of null model, calculated as 2(log-likelihood of the saturated model - log-likelihood of a null model), where df = n - 1
 
-Residual Deviance = 2(log-likelihood of the saturated model - log-likelihood of the proposed model), where df = n - k
+* Residual Deviance = 2(log-likelihood of the saturated model - log-likelihood of the proposed model), where df = n - k
 
 If the null deviance is really small, it means that the Null Model explains the data pretty well. Likewise, if the residual deviance is really small, then the Residual Deviance explains the data pretty well.
 
@@ -519,13 +519,13 @@ Logistic regression can be easily extended to situations with multiple predictor
 
 Using the same “graddata.csv” dataset, run a multiple logistic regression analysis using gpa, gre, and rank to look at student admissions to graduate school. Do not, at first, include interaction terms.
 
-What variables are significant predictors of the log(odds ratio) of admission?
+* What variables are significant predictors of the log(odds ratio) of admission?
 
-What is the value of the log(odds ratio) coefficient and the 95% CIs around that value for the two continuous variable (gpa and gre), when taking the effects of the other and of rank into account? What do these translate into on the actual odds ratio scale?
+* What is the value of the log(odds ratio) coefficient and the 95% CIs around that value for the two continuous variable (gpa and gre), when taking the effects of the other and of rank into account? What do these translate into on the actual odds ratio scale?
 
-Is the model including all three predictors better than models that include just two predictors?
+* Is the model including all three predictors better than models that include just two predictors?
 
-Compare a model that includes the three predictors with no interactions versus one that includes the three predictors and all possible interactions.
+* Compare a model that includes the three predictors with no interactions versus one that includes the three predictors and all possible interactions.
 
 ```{r}
 d$rank <- as.factor(d$rank)  # make sure rank is a categorical variable
@@ -570,7 +570,7 @@ anova(glmNO, glmALL, test = "Chisq")  # adding interaction terms to model doesn'
 
 Sometimes, we want to model a response variable that is in the form of count data (e.g., species richness on an island in terms of distance from the mainland, number of plants of a particular species found in a sampling plot in relation to altitude). Many discrete response variables have counts as possible outcomes. Binomial counts are the number of successes x in a fixed number of trials, n. Poisson counts are the number occurrences of some event in a certain interval of time (or space). While binomial counts only take values between 0 and n, Poisson counts have no upper bound. We are going to focus on Poisson counts here.
 
-As we have discussed before, for Poisson distributed variables, the mean and the variance are equal and represented by a single parameter (λ), and therefore linear models based on normal distributions may not be appropriate. We have seen that sometimes we can simply transform a response variable with some kind of power transformation to make it appear more normally distributed, but an alternative is to use a GLM with a Poisson error term and use a log transformation as the link function, resulting in in a log-linear model. Thus, when we do Poisson regression, our regression model tries to predict the natural log of the expected value of Y, i.e., λi.
+As we have discussed before, for Poisson distributed variables, the mean and the variance are equal and represented by a single parameter (λ), and therefore linear models based on normal distributions may not be appropriate. We have seen that sometimes we can simply transform a response variable with some kind of power transformation to make it appear more normally distributed, but an alternative is to use a GLM with a Poisson error term and use a log transformation as the link function, resulting in in a **log-linear** model. Thus, when we do Poisson regression, our regression model tries to predict the natural log of the expected value of Y, i.e., λi.
 
 The link function is thus:
 
@@ -626,7 +626,7 @@ CIs
 
 ```
 
-In the summary(), note that the residual deviance is slighly higher than the residual degrees of freedom, which suggests that our data are slightly overdispersed (i.e., there is some extra, unexplained variation in the response, where the variance is greater than the mean). If this were dramatic, we might use “quasipoisson” for the family instead, but we will stick with “poisson”.
+In the summary(), **note that the residual deviance is slighly higher than the residual degrees of freedom, which suggests that our data are slightly overdispersed (i.e., there is some extra, unexplained variation in the response, where the variance is greater than the mean)**. If this were dramatic, we might use “quasipoisson” for the family instead, but we will stick with “poisson”.
 
 Now, let’s fit a “line” of best fit through our data, along with 95% CI around this “line”. We want to plot the relationship between success (rather than log success) and age, so this relationship will not actually be linear but log-linear.
 
