@@ -1,0 +1,68 @@
+---
+title: "AN588-Week-11"
+author: "Brooke Rothamer"
+date: "2023-11-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(curl)
+f <- curl("https://raw.githubusercontent.com/fuzzyatelin/fuzzyatelin.github.io/master/AN588_Fall21/chimpgrooming.csv")
+d <- read.csv(f, header = TRUE, sep = ",")
+head(d)
+summary(d)
+par(mfrow = c(1, 1))
+boxplot(data = d, duration ~ subject, col = c("lightpink1"))
+```
+
+```{r}
+# we see lots of individual variation let's plot grooming received
+# duration in relation to reproductive condition
+boxplot(data = d, duration ~ reprocondition, col = c("burlywood2", "lightpink1"))
+
+# let's plot grooming received duration in relation to reproductive
+# condition and parity
+boxplot(data = d, duration ~ reprocondition * parity, col = c("burlywood2",
+    "lightpink1"))
+# let's plot grooming received duration in relation to reproductive
+# condition and parity
+boxplot(data = d, duration ~ reprocondition * parity, col = c("burlywood2",
+    "lightpink1"))
+boxplot(data = d, duration ~ reprocondition * subject, col = c("burlywood2",
+    "lightpink1"))
+```
+
+
+```{r}
+library(lme4)
+lme <- lmer(data = d, duration ~ reprocondition + parity + (1 | subject))
+summary(lme)
+
+```
+
+```{r}
+coefficients(lme)
+full <- lmer(data = d, duration ~ reprocondition + parity + (1 | subject), REML = FALSE)
+summary(full)
+
+```
+
+```{r}
+reduced <- lmer(data = d, duration ~ parity + (1 | subject), REML = FALSE)
+summary(reduced)
+```
+
+```{r}
+anova(reduced, full, test = "Chisq")
+```
+
+```{r}
+full <- lmer(data = d, duration ~ reprocondition + parity + (1 | subject), REML = FALSE)
+reduced <- lmer(data = d, duration ~ reprocondition + (1 | subject), REML = FALSE)
+anova(reduced, full, test = "Chisq")
+```
+### Challenge 2
