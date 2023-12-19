@@ -204,7 +204,7 @@ df
 ```
 Rather than creating one from scratch, we more commonly read tabular data into R from a pre-existing data file (i.e., a spreadsheet), which typically results in the table being represented as a dataframe. 
 ```{r data frame from file}
-df <- read.csv("C:/Users/brook/OneDrive/Documents/2023_Fall/AN588-Week-2/random-people", sep = ",", header = TRUE, stringsAsFactors = FALSE)
+df <- read.csv("C:/Users/brook/OneDrive/Documents/2023_Fall/AN588/random-people", sep = ",", header = TRUE, stringsAsFactors = FALSE)
 # only print select columns
 df[, c(1, 3, 4, 11, 12)]
 ```
